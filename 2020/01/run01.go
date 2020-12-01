@@ -92,7 +92,7 @@ func exampleOne() {
   runOne(input_numbers)
 }
 
-func one() {
+func mainOne() {
   input_numbers, err := readInput()
   if err != nil {
     fmt.Println(err)
@@ -128,7 +128,7 @@ func main() {
     exampleOne()
   }
   if request == "1" || request == "input1" || request == "all" {
-    one()
+    mainOne()
   }
   if request == "2" || request == "example2" || request == "all" {
     exampleTwo()
