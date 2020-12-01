@@ -29,7 +29,7 @@ func findThree(s []int) (int, int, int, error) {
   for outer_index, number_a := range s {
     for inner_index, number_b := range s[outer_index:] {
       for _, number_c := range s[inner_index:] {
-        if number_a + number_b == 2020 {
+        if number_a + number_b + number_c == 2020 {
           return number_a, number_b, number_c, nil
         }
       }
