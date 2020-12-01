@@ -8,7 +8,7 @@ import (
   "strconv"
 )
 
-// find_pair returns the two firsts elements whose sum equal 2020
+// findPair returns the two first elements whose sum equal 2020
 // take int slice as input
 // third returned value is error or nil
 func findPair(s []int) (int, int, error) {
@@ -22,7 +22,23 @@ func findPair(s []int) (int, int, error) {
   return 0, 0, errors.New("can't find pair whose sum give 2020")
 }
 
-// 
+// findThree returns the three first elements whose sum equal 2020
+// take int slice as input
+// fourth returned value is error or nil
+func findThree(s []int) (int, int, int, error) {
+  for outer_index, number_a := range s {
+    for inner_index, number_b := range s[outer_index:] {
+      for _, number_c := range s[inner_index:] {
+        if number_a + number_b == 2020 {
+          return number_a, number_b, number_c, nil
+        }
+      }
+    }
+  }
+  return 0, 0, 0, errors.New("can't find three numbers whose sum give 2020")
+}
+
+// fixExpense according Elves logic
 func fixExpense (s []int) (int, error) {
   number_a, number_b, err := findPair(s)
   if err != nil {
@@ -31,6 +47,8 @@ func fixExpense (s []int) (int, error) {
   return number_a * number_b, nil
 }
 
+// Read input1.txt file and return a slice of int
+// considering each line is just containing one int
 func readInput( ) ([]int, error) {
   input_fd, err := os.Open("./input1.txt")
   if err != nil {
@@ -93,5 +111,8 @@ func main() {
   }
   if request == "1" || request == "input1" || request == "all" {
     one()
+  }
+  if request == "2" || request == "example2" || request == "all" {
+    exampleOne()
   }
 }

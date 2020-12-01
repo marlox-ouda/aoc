@@ -64,3 +64,27 @@ func TestReadInput(t *testing.T) {
              expected_last_number, input_numbers[given_len-1])
   }
 }
+
+func TestFindThree(t *testing.T) {
+  input_numbers := make([]int, 6)
+  input_numbers[0] = 1721
+  input_numbers[1] = 979
+  input_numbers[2] = 366
+  input_numbers[3] = 299
+  input_numbers[4] = 675
+  input_numbers[5] = 1456
+  three_a, three_b, three_c, err := findThree(input_numbers)
+  if err != nil {
+    t.Error("findThree: Do not find any valid pair on example test")
+  } else {
+    if !(three_a == 979 || three_b == 979 || three_c == 979) {
+      t.Errorf("findThree: Do not contain 979 among [%v,%v,%v]", three_a, three_b, three_c)
+    }
+    if !(three_a == 366 || three_b == 366 || three_c == 366) {
+      t.Errorf("findThree: Do not contain 366 among [%v,%v,%v]", three_a, three_b, three_c)
+    }
+    if !(three_a == 675 || three_b == 675 || three_c == 675) {
+      t.Errorf("findThree: Do not contain 675 among [%v,%v,%v]", three_a, three_b, three_c)
+    }
+  }
+}
