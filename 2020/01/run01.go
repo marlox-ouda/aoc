@@ -103,6 +103,24 @@ func one() {
   }
 }
 
+func exampleTwo() {
+  input_numbers := make([]int, 6)
+  input_numbers[0] = 1721
+  input_numbers[1] = 979
+  input_numbers[2] = 366
+  input_numbers[3] = 299
+  input_numbers[4] = 675
+  input_numbers[5] = 1456
+  fmt.Printf("Input: %d\n", input_numbers)
+  number_a, number_b, number_c, err := findThree(input_numbers)
+  if err != nil {
+    fmt.Println(err)
+  } else {
+    fixed_expense := fixExpense(number_a, number_b, number_c)
+    fmt.Printf("Output: %d\n", fixed_expense)
+  }
+}
+
 func main() {
   request := "all"
   if len(os.Args) > 1 {
@@ -115,6 +133,6 @@ func main() {
     one()
   }
   if request == "2" || request == "example2" || request == "all" {
-    exampleOne()
+    exampleTwo()
   }
 }
