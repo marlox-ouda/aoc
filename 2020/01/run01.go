@@ -39,12 +39,12 @@ func findThree(s []int) (int, int, int, error) {
 }
 
 // fixExpense according Elves logic
-func fixExpense (s []int) (int, error) {
-  number_a, number_b, err := findPair(s)
-  if err != nil {
-    return 0, err
+func fixExpense (numbers_to_multiply ... int) int {
+  total := 1
+  for _, number := range numbers_to_multiply {
+    total *= number
   }
-  return number_a * number_b, nil
+  return total
 }
 
 // Read input1.txt file and return a slice of int
@@ -79,11 +79,12 @@ func exampleOne() {
   input_numbers[4] = 675
   input_numbers[5] = 1456
   fmt.Printf("Input: %d\n", input_numbers)
-  result, err := fixExpense(input_numbers)
+  number_a, number_b, err := findPair(input_numbers)
   if err != nil {
     fmt.Println(err)
   } else {
-    fmt.Printf("Output: %d\n", result)
+    fixed_expense := fixExpense(number_a, number_b)
+    fmt.Printf("Output: %d\n", fixed_expense)
   }
 }
 
@@ -92,10 +93,11 @@ func one() {
   if err != nil {
     fmt.Println(err)
   } else {
-    fixed_expense, err := fixExpense(input_numbers)
+    number_a, number_b, err := findPair(input_numbers)
     if err != nil {
       fmt.Println(err)
     } else {
+      fixed_expense := fixExpense(number_a, number_b)
       fmt.Println(fixed_expense)
     }
   }
