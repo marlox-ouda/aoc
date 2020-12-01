@@ -61,12 +61,26 @@ func exampleOne() {
   input_numbers[4] = 675
   input_numbers[5] = 1456
   fmt.Printf("Input: %d\n", input_numbers)
-  result, _ := fixExpense(input_numbers)
-  fmt.Printf("Output: %d\n", result)
+  result, err := fixExpense(input_numbers)
+  if err != nil {
+    fmt.Println(err)
+  } else {
+    fmt.Printf("Output: %d\n", result)
+  }
 }
 
 func one() {
-  readInput()
+  input_numbers, err := readInput()
+  if err != nil {
+    fmt.Println(err)
+  } else {
+    fixed_expense, err := fixExpense(input_numbers)
+    if err != nil {
+      fmt.Println(err)
+    } else {
+      fmt.Println(fixed_expense)
+    }
+  }
 }
 
 func main() {
