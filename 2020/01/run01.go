@@ -70,15 +70,7 @@ func readInput( ) ([]int, error) {
   return numbers_slice, nil
 }
 
-func exampleOne() {
-  input_numbers := make([]int, 6)
-  input_numbers[0] = 1721
-  input_numbers[1] = 979
-  input_numbers[2] = 366
-  input_numbers[3] = 299
-  input_numbers[4] = 675
-  input_numbers[5] = 1456
-  fmt.Printf("Input: %d\n", input_numbers)
+func runOne(input_numbers []int) {
   number_a, number_b, err := findPair(input_numbers)
   if err != nil {
     fmt.Println(err)
@@ -88,18 +80,24 @@ func exampleOne() {
   }
 }
 
+func exampleOne() {
+  input_numbers := make([]int, 6)
+  input_numbers[0] = 1721
+  input_numbers[1] = 979
+  input_numbers[2] = 366
+  input_numbers[3] = 299
+  input_numbers[4] = 675
+  input_numbers[5] = 1456
+  fmt.Printf("Input: %d\n", input_numbers)
+  runOne(input_numbers)
+}
+
 func one() {
   input_numbers, err := readInput()
   if err != nil {
     fmt.Println(err)
   } else {
-    number_a, number_b, err := findPair(input_numbers)
-    if err != nil {
-      fmt.Println(err)
-    } else {
-      fixed_expense := fixExpense(number_a, number_b)
-      fmt.Println(fixed_expense)
-    }
+    runOne(input_numbers)
   }
 }
 
