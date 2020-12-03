@@ -6,12 +6,19 @@ import (
   "fmt"
   "os"
   "strconv"
+  "strings"
 )
 
-// checkPolicyOne if letter is present at only one given of both
-// given position in the password
-func checkPolicyOne(pos_a int, pos_b int, letter byte, password string) bool {
-  return true
+// checkPolicyOne if letter occurence in password is between min and max
+func checkPolicyOne(min int, max int, letter byte, password string) bool {
+  var (
+    count int
+  )
+  count = strings.Count(password, string(letter))
+  if min <= count && count <= max {
+    return true
+  }
+  return false
 }
 
 // checkPolicyTwo if letter is present at only one given of both
