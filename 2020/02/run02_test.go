@@ -3,7 +3,8 @@ package main
 import "testing"
 
 func TestCheckPolicyOne(t *testing.T) {
-  givenResult := checkPolicyOne(1, 3, 'a', "abcde")
+  var givenResult bool
+  givenResult = checkPolicyOne(1, 3, 'a', "abcde")
   if !givenResult {
     t.Error("checkPolicyOne(1, 3, 'a', \"abcde\") give false, true expected")
   }
@@ -18,13 +19,14 @@ func TestCheckPolicyOne(t *testing.T) {
 }
 
 func TestCheckPolicyTwo(t *testing.T) {
-  givenResult := checkPolicyTwo(1, 3, 'a', "abcde")
+  var givenResult bool
+  givenResult = checkPolicyTwo(1, 3, 'a', "abcde")
   if !givenResult {
     t.Error("checkPolicyTwo(1, 3, 'a', \"abcde\") gives false, true expected")
   }
   givenResult = checkPolicyTwo(1, 3, 'b', "cdefg")
-  if !givenResult {
-    t.Error("checkPolicyTwo(1, 3, 'b', \"cdefg\") gives false, true expected")
+  if givenResult {
+    t.Error("checkPolicyTwo(1, 3, 'b', \"cdefg\") gives true, false expected")
   }
   givenResult = checkPolicyTwo(1, 3, 'c', "ccccccccc")
   if givenResult {
