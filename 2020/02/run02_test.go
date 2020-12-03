@@ -12,7 +12,7 @@ func TestCheckPolicyOne(t *testing.T) {
   if givenResult {
     t.Error("checkPolicyOne(1, 3, 'b', \"cdefg\") gives true, false expected")
   }
-  givenResult = checkPolicyOne(1, 3, 'c', "ccccccccc")
+  givenResult = checkPolicyOne(2, 9, 'c', "ccccccccc")
   if !givenResult {
     t.Error("checkPolicyOne(1, 3, 'c', \"ccccccccc\") gives false, true expected")
   }
@@ -28,7 +28,7 @@ func TestCheckPolicyTwo(t *testing.T) {
   if givenResult {
     t.Error("checkPolicyTwo(1, 3, 'b', \"cdefg\") gives true, false expected")
   }
-  givenResult = checkPolicyTwo(1, 3, 'c', "ccccccccc")
+  givenResult = checkPolicyTwo(2, 9, 'c', "ccccccccc")
   if givenResult {
     t.Error("checkPolicyTwo(1, 3, 'c', \"ccccccccc\") gives true, false expected")
   }
