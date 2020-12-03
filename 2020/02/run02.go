@@ -17,7 +17,13 @@ func checkPolicyOne(pos_a int, pos_b int, letter byte, password string) bool {
 // checkPolicyTwo if letter is present at only one given of both
 // given position in the password
 func checkPolicyTwo(pos_a int, pos_b int, letter byte, password string) bool {
-  return true
+  var (
+    check_a bool
+    check_b bool
+  )
+  check_a = (password[pos_a - 1] == letter)
+  check_b = (password[pos_b - 1] == letter)
+  return check_a != check_b
 }
 
 // findPair returns the two first elements whose sum equal 2020
