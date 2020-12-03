@@ -3,32 +3,32 @@ package main
 import "testing"
 
 func TestCheckPolicyOne(t *testing.T) {
-  givenResult := checkPolicyOne(1, 3, 'a', 'abcde')
+  givenResult := checkPolicyOne(1, 3, 'a', "abcde")
   if !givenResult {
-    t.Error("checkPolicyOne(1, 3, 'a', 'abcde') give false, true expected")
+    t.Error("checkPolicyOne(1, 3, 'a', \"abcde\") give false, true expected")
   }
-  givenResult = checkPolicyOne(1, 3, 'b', 'cdefg')
+  givenResult = checkPolicyOne(1, 3, 'b', "cdefg")
   if givenResult {
-    t.Error("checkPolicyOne(1, 3, 'b', 'cdefg') gives true, false expected")
+    t.Error("checkPolicyOne(1, 3, 'b', \"cdefg\") gives true, false expected")
   }
-  givenResult = checkPolicyOne(1, 3, 'c', 'ccccccccc')
+  givenResult = checkPolicyOne(1, 3, 'c', "ccccccccc")
   if !givenResult {
-    t.Error("checkPolicyOne(1, 3, 'c', 'ccccccccc') gives false, true expected")
+    t.Error("checkPolicyOne(1, 3, 'c', \"ccccccccc\") gives false, true expected")
   }
 }
 
 func TestCheckPolicyTwo(t *testing.T) {
-  givenResult := checkPolicyTwo(1, 3, 'a', 'abcde')
+  givenResult := checkPolicyTwo(1, 3, 'a', "abcde")
   if !givenResult {
-    t.Error("checkPolicyTwo(1, 3, 'a', 'abcde') gives false, true expected")
+    t.Error("checkPolicyTwo(1, 3, 'a', \"abcde\") gives false, true expected")
   }
-  givenResult = checkPolicyTwo(1, 3, 'b', 'cdefg')
+  givenResult = checkPolicyTwo(1, 3, 'b', "cdefg")
   if !givenResult {
-    t.Error("checkPolicyTwo(1, 3, 'b', 'cdefg') gives false, true expected")
+    t.Error("checkPolicyTwo(1, 3, 'b', \"cdefg\") gives false, true expected")
   }
-  givenResult = checkPolicyTwo(1, 3, 'c', 'ccccccccc')
+  givenResult = checkPolicyTwo(1, 3, 'c', "ccccccccc")
   if givenResult {
-    t.Error("checkPolicyTwo(1, 3, 'c', 'ccccccccc') gives true, false expected")
+    t.Error("checkPolicyTwo(1, 3, 'c', \"ccccccccc\") gives true, false expected")
   }
 }
 
