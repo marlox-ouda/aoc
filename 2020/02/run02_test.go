@@ -56,7 +56,7 @@ func TestConvertLine(t *testing.T) {
     t.Errorf("convertLine(\"1-3 b: cdefg\") return unexpected values (%v, %v, %c, %s)",
              givenNumA, givenNumB, givenLetter, givenPassword)
   }
-  givenNumA, givenNumB, givenLetter, givenPassword, givenError = convertLine("2-9 b: ccccccccc")
+  givenNumA, givenNumB, givenLetter, givenPassword, givenError = convertLine("2-9 c: ccccccccc")
   if givenError != nil {
     t.Errorf("convertLine(\"2-9 a: ccccccccc\") return err %s", givenError)
   } else if givenNumA != 2 || givenNumB != 9 || givenLetter != 'c' || givenPassword != "ccccccccc" {
