@@ -91,7 +91,7 @@ func fixExpense (numbers_to_multiply ... int) int {
 // Read input1.txt file and return a slice of int
 // considering each line is just containing one int
 func readInput( ) ([]string, error) {
-  input_fd, err := os.Open("./input1.txt")
+  input_fd, err := os.Open("./input2.txt")
   if err != nil {
     return nil, err
   }
