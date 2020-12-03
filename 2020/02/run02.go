@@ -31,6 +31,12 @@ func checkPolicyTwo(pos_a int, pos_b int, letter byte, password string) bool {
   return check_a != check_b
 }
 
+// convertLine
+// read element from the given string line
+func convertLine(line string) (int, int, byte, string, error) {
+  return 1, 3, 'a', "abcde", nil
+}
+
 // findPair returns the two first elements whose sum equal 2020
 // take int slice as input
 // third returned value is error or nil
