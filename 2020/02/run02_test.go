@@ -66,25 +66,24 @@ func TestConvertLine(t *testing.T) {
 }
 
 func TestReadInput(t *testing.T) {
-  input_numbers, err := readInput()
+  input_lines, err := readInput()
   if err != nil {
     t.Errorf("readInput: fail with %s error", err)
   }
-  expected_first_number := 1918
-  expected_last_number := 1407
-  expected_len := 200
-  if input_numbers[0] != expected_first_number {
-    t.Errorf("readInput: Not expected first number, %v expected, %v given",
-             expected_first_number, input_numbers[0])
+  expected_first_line := "7-9 l: vslmtglbc"
+  expected_last_line := "9-13 p: bppxpjpmpwcpppdprpp"
+  expected_len := 1000
+  if input_lines[0] != expected_first_line {
+    t.Errorf("readInput: Not expected first line, %s expected, %s given",
+             expected_first_line, input_lines[0])
   }
-  given_len := len(input_numbers)
+  given_len := len(input_lines)
   if given_len != expected_len {
     t.Errorf("readInput: Not expected slice len, %v expected, %v given",
              expected_len, given_len)
   }
-  if input_numbers[given_len-1] != expected_last_number {
-    t.Errorf("readInput: Not expected last number, %v expected, %v given",
-             expected_last_number, input_numbers[given_len-1])
+  if input_lines[given_len-1] != expected_last_line {
+    t.Errorf("readInput: Not expected last line, %s expected, %s given",
+             expected_last_line, input_lines[given_len-1])
   }
 }
-
