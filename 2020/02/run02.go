@@ -2,7 +2,6 @@ package main
 
 import (
   "bufio"
-  "errors"
   "fmt"
   "os"
   "strings"
@@ -47,45 +46,6 @@ func convertLine(line string) (int, int, byte, string, error) {
     err = fmt.Errorf("Only able to parse %v/4 items on %s", parsed_items_nb, line)
   }
   return number_a, number_b, letter, password, err
-}
-
-// findPair returns the two first elements whose sum equal 2020
-// take int slice as input
-// third returned value is error or nil
-func findPair(s []int) (int, int, error) {
-  for index, number_a := range s {
-    for _, number_b := range s[index:] {
-      if number_a + number_b == 2020 {
-        return number_a, number_b, nil
-      }
-    }
-  }
-  return 0, 0, errors.New("can't find pair whose sum give 2020")
-}
-
-// findThree returns the three first elements whose sum equal 2020
-// take int slice as input
-// fourth returned value is error or nil
-func findThree(s []int) (int, int, int, error) {
-  for outer_index, number_a := range s {
-    for inner_index, number_b := range s[outer_index:] {
-      for _, number_c := range s[inner_index:] {
-        if number_a + number_b + number_c == 2020 {
-          return number_a, number_b, number_c, nil
-        }
-      }
-    }
-  }
-  return 0, 0, 0, errors.New("can't find three numbers whose sum give 2020")
-}
-
-// fixExpense according Elves logic
-func fixExpense (numbers_to_multiply ... int) int {
-  total := 1
-  for _, number := range numbers_to_multiply {
-    total *= number
-  }
-  return total
 }
 
 // Read input1.txt file and return a slice of int
