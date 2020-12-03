@@ -5,7 +5,6 @@ import (
   "errors"
   "fmt"
   "os"
-  "strconv"
   "strings"
 )
 
@@ -91,25 +90,20 @@ func fixExpense (numbers_to_multiply ... int) int {
 
 // Read input1.txt file and return a slice of int
 // considering each line is just containing one int
-func readInput( ) ([]int, error) {
+func readInput( ) ([]string, error) {
   input_fd, err := os.Open("./input1.txt")
   if err != nil {
     return nil, err
   }
   defer input_fd.Close()
   scanner := bufio.NewScanner(input_fd)
-  var numbers_slice []int
-  var casted_number int
+  var lines []string
   var line string
   for scanner.Scan() {
     line = scanner.Text()
-    casted_number, err = strconv.Atoi(line)
-    if err != nil {
-      return nil, fmt.Errorf("can't cast %v to integer", line)
-    }
-    numbers_slice = append(numbers_slice, casted_number)
+    lines = append(lines, line)
   }
-  return numbers_slice, nil
+  return lines, nil
 }
 
 func runOne(line string, verbose bool) bool {
