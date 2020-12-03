@@ -34,7 +34,20 @@ func checkPolicyTwo(pos_a int, pos_b int, letter byte, password string) bool {
 // convertLine
 // read element from the given string line
 func convertLine(line string) (int, int, byte, string, error) {
-  return 1, 3, 'a', "abcde", nil
+  var (
+    number_a int
+    number_b int
+    letter byte
+    password string
+    err error
+    parsed_items_nb int
+  )
+  parsed_items_nb, err = fmt.Fscanf(strings.NewReader(line), "%d-%d %c: %s",
+                                   &number_a, &number_b, &letter, &password)
+  if err == nil && parsed_items_nb < 4 {
+    err = fmt.Errorf("Only able to parse %v/4 items on %s", parsed_items_nb, line)
+  }
+  return number_a, number_b, letter, password, err
 }
 
 // findPair returns the two first elements whose sum equal 2020
