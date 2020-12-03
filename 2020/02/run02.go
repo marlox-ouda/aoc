@@ -11,9 +11,7 @@ import (
 
 // checkPolicyOne if letter occurence in password is between min and max
 func checkPolicyOne(min int, max int, letter byte, password string) bool {
-  var (
-    count int
-  )
+  var count int
   count = strings.Count(password, string(letter))
   if min <= count && count <= max {
     return true
