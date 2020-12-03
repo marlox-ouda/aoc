@@ -112,65 +112,89 @@ func readInput( ) ([]int, error) {
   return numbers_slice, nil
 }
 
-func runOne(input_numbers []int) {
-  number_a, number_b, err := findPair(input_numbers)
-  if err != nil {
-    fmt.Println(err)
-  } else {
-    fixed_expense := fixExpense(number_a, number_b)
-    fmt.Printf("Output: %d\n", fixed_expense)
+func runOne(line string, verbose bool) bool {
+  if verbose {
+    fmt.Printf("Input: %s ->", line)
   }
-}
+  min, max, letter, password, err := convertLine(line)
+  if err == nil {
+    result := checkPolicyOne(min, max, letter, password)
+    if verbose {
+      fmt.Printf("Output: %t\n", result)
+    }
+    return result
+  } else {
+    fmt.Printf("Error: %s\n", err)
+  }
+  return false
+ }
 
 func exampleOne() {
-  input_numbers := make([]int, 6)
-  input_numbers[0] = 1721
-  input_numbers[1] = 979
-  input_numbers[2] = 366
-  input_numbers[3] = 299
-  input_numbers[4] = 675
-  input_numbers[5] = 1456
-  fmt.Printf("Input: %d\n", input_numbers)
-  runOne(input_numbers)
+  var (
+    count_valids int
+    line string
+  )
+  var lines = []string{
+    "1-3 a: abcde",
+    "1-3 b: cdefg",
+    "2-9 c: ccccccccc",
+  }
+  for _, line = range lines {
+    if runOne(line, true) {
+      count_valids += 1
+    }
+  }
+  fmt.Printf("Final result: %v\n", count_valids)
 }
 
 func mainOne() {
-  input_numbers, err := readInput()
+  _, err := readInput()
   if err != nil {
     fmt.Println(err)
   } else {
-    runOne(input_numbers)
   }
 }
 
-func runTwo(input_numbers []int) {
-  number_a, number_b, number_c, err := findThree(input_numbers)
-  if err != nil {
-    fmt.Println(err)
-  } else {
-    fixed_expense := fixExpense(number_a, number_b, number_c)
-    fmt.Printf("Output: %d\n", fixed_expense)
+func runTwo(line string, verbose bool) bool {
+  if verbose {
+    fmt.Printf("Input: %s -> ", line)
   }
-}
+  min, max, letter, password, err := convertLine(line)
+  if err == nil {
+    result := checkPolicyTwo(min, max, letter, password)
+    if verbose {
+      fmt.Printf("Output: %t\n", result)
+    }
+    return result
+  } else {
+    fmt.Printf("Error: %s\n", err)
+  }
+  return false
+ }
 
 func exampleTwo() {
-  input_numbers := make([]int, 6)
-  input_numbers[0] = 1721
-  input_numbers[1] = 979
-  input_numbers[2] = 366
-  input_numbers[3] = 299
-  input_numbers[4] = 675
-  input_numbers[5] = 1456
-  fmt.Printf("Input: %d\n", input_numbers)
-  runTwo(input_numbers)
+  var (
+    count_valids int
+    line string
+  )
+  var lines = []string{
+    "1-3 a: abcde",
+    "1-3 b: cdefg",
+    "2-9 c: ccccccccc",
+  }
+  for _, line = range lines {
+    if runTwo(line, true) {
+      count_valids += 1
+    }
+  }
+  fmt.Printf("Final result: %v\n", count_valids)
 }
 
 func mainTwo() {
-  input_numbers, err := readInput()
+  _, err := readInput()
   if err != nil {
     fmt.Println(err)
   } else {
-    runTwo(input_numbers)
   }
 }
 
