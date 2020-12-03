@@ -98,14 +98,24 @@ func exampleOne() {
       count_valids += 1
     }
   }
-  fmt.Printf("Final result: %v\n", count_valids)
+  fmt.Printf("ExampleOne: Final result: %v\n", count_valids)
 }
 
 func mainOne() {
-  _, err := readInput()
+  var (
+    count_valids int
+    line string
+  )
+  lines, err := readInput()
   if err != nil {
     fmt.Println(err)
   } else {
+    for _, line = range lines {
+      if runOne(line, false) {
+        count_valids += 1
+      }
+    }
+    fmt.Printf("MainOne: Final result: %v\n", count_valids)
   }
 }
 
@@ -121,7 +131,7 @@ func runTwo(line string, verbose bool) bool {
     }
     return result
   } else {
-    fmt.Printf("Error: %s\n", err)
+    fmt.Printf("MainOne: Error: %s\n", err)
   }
   return false
  }
@@ -141,14 +151,24 @@ func exampleTwo() {
       count_valids += 1
     }
   }
-  fmt.Printf("Final result: %v\n", count_valids)
+  fmt.Printf("ExampleTwo: Final result: %v\n", count_valids)
 }
 
 func mainTwo() {
-  _, err := readInput()
+  var (
+    count_valids int
+    line string
+  )
+  lines, err := readInput()
   if err != nil {
     fmt.Println(err)
   } else {
+    for _, line = range lines {
+      if runTwo(line, false) {
+        count_valids += 1
+      }
+    }
+    fmt.Printf("MainTwo: Final result: %v\n", count_valids)
   }
 }
 
