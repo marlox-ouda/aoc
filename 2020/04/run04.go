@@ -89,7 +89,10 @@ func extractPassportData(password_line string) (*passport, error) {
 }
 
 func checkPassportRequiredField(pass *passport) bool {
-  return true
+  if pass.byr != "" && pass.iyr != "" && pass.eyr != "" && pass.hgt != "" && pass.hcl != "" && pass.ecl != "" && pass.pid != "" {
+    return true
+  }
+  return false
 }
 
 var example_geology = []string{
