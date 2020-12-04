@@ -128,23 +128,6 @@ func readInput( ) ([]string, error) {
   return lines, nil
 }
 
-func runOne(line string, verbose bool) bool {
-  if verbose {
-    fmt.Printf("Input: %s ->", line)
-  }
-  min, max, letter, password, err := convertLine(line)
-  if err == nil {
-    result := checkPolicyOne(min, max, letter, password)
-    if verbose {
-      fmt.Printf("Output: %t\n", result)
-    }
-    return result
-  } else {
-    fmt.Printf("Error: %s\n", err)
-  }
-  return false
- }
-
 func exampleOne() {
   var trees_number int
   trees_number = countTreesOnDirection(example_geology, 3, 1)
