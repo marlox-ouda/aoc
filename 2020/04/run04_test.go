@@ -9,7 +9,7 @@ func TestExtractPassportLines(t *testing.T) {
   )
   given_result = extractPassportLines(example_passwords_input)
   if len(given_result) != 4 {
-    t.Errorf("len(extractPassportLines(<example>)), %s given, 4 expected", len(given_result))
+    t.Errorf("len(extractPassportLines(<example>)), %v given, 4 expected", len(given_result))
   } else {
     expected_result = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm"
     if given_result[0] != expected_result {
