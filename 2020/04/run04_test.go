@@ -2,38 +2,38 @@ package main
 
 import "testing"
 
-func TestExtractPasswordData(t *testing.T) {
+func TestExtractPassportData(t *testing.T) {
   var (
     given_result *password
     err error
   )
-  given_result, err = extractPasswordData("ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm")
+  given_result, err = extractPassport("ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm")
   if err != nil {
-    t.Errorf("extractPasswordData(<1>) raise error: %s", err)
+    t.Errorf("extractPassport(<1>) raise error: %s", err)
   } else {
     if given_result.byr != "1937" {
-        t.Errorf("extractPasswordData(<1>).byr, %s given, \"1937\" expected", given_result.byr)
+        t.Errorf("extractPassport(<1>).byr, %s given, \"1937\" expected", given_result.byr)
     }
     if given_result.iyr != "2017" {
-        t.Errorf("extractPasswordData(<1>).iyr, %s given, \"2017\" expected", given_result.iyr)
+        t.Errorf("extractPassport(<1>).iyr, %s given, \"2017\" expected", given_result.iyr)
     }
     if given_result.eyr != "2020" {
-        t.Errorf("extractPasswordData(<1>).eyr, %s given, \"2020\" expected", given_result.eyr)
+        t.Errorf("extractPassport(<1>).eyr, %s given, \"2020\" expected", given_result.eyr)
     }
     if given_result.hgt != "183cm" {
-        t.Errorf("extractPasswordData(<1>).hgt, %s given, \"183cm\" expected", given_result.hgt)
+        t.Errorf("extractPassport(<1>).hgt, %s given, \"183cm\" expected", given_result.hgt)
     }
     if given_result.hcl != "#fffffd" {
-        t.Errorf("extractPasswordData(<1>).hcl, %s given, \"#fffffd\" expected", given_result.hcl)
+        t.Errorf("extractPassport(<1>).hcl, %s given, \"#fffffd\" expected", given_result.hcl)
     }
     if given_result.ecl != "gry" {
-        t.Errorf("extractPasswordData(<1>).ecl, %s given, \"gry\" expected", given_result.ecl)
+        t.Errorf("extractPassport(<1>).ecl, %s given, \"gry\" expected", given_result.ecl)
     }
     if given_result.pid != "860033327" {
-        t.Errorf("extractPasswordData(<1>).pid, %s given, \"860033327\" expected", given_result.pid)
+        t.Errorf("extractPassport(<1>).pid, %s given, \"860033327\" expected", given_result.pid)
     }
     if given_result.cid != "147" {
-        t.Errorf("extractPasswordData(<1>).pid, %s given, \"147\" expected", given_result.cid)
+        t.Errorf("extractPassport(<1>).pid, %s given, \"147\" expected", given_result.cid)
     }
   }
 }
