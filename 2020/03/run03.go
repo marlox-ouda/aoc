@@ -23,7 +23,15 @@ var example_geology = []string{
 
 // isTree return whether there is a three or no at the given position
 // position is given 0 based and take top left corner as (0, 0) position
-func isTree(grid []string, vert_offset int, horizontal_offset int) bool {
+func isTree(grid []string, vertical_offset int, horizontal_offset int) bool {
+  line_len := len(grid[0])
+  if vertical_offset > len(grid) {
+    return false
+  }
+  horizontal_offset = horizontal_offset % line_len
+  if grid[vertical_offset][horizontal_offset] == '#' {
+    return true
+  }
   return false
 }
 
