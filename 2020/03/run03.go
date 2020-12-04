@@ -25,7 +25,7 @@ var example_geology = []string{
 // position is given 0 based and take top left corner as (0, 0) position
 func isTree(grid []string, vertical_offset int, horizontal_offset int) bool {
   line_len := len(grid[0])
-  if vertical_offset > len(grid) {
+  if vertical_offset >= len(grid) {
     return false
   }
   horizontal_offset = horizontal_offset % line_len
@@ -37,7 +37,22 @@ func isTree(grid []string, vertical_offset int, horizontal_offset int) bool {
 
 // count encounter trees from the top to the bottom of the grid
 func countTreesOnDirection(grid []string, horizontal_step int, vertical_step int) int {
-  return 2
+  var (
+    current_vertical_offset int
+    current_horizontal_offset int
+    currenly_encountered_trees int
+  )
+  if isTree(grid, current_vertical_offset, current_horizontal_offset) {
+      currenly_encountered_trees += 1
+  }
+  for current_vertical_offset < len(grid) {
+    current_vertical_offset += vertical_step
+    current_horizontal_offset += horizontal_step
+    if isTree(grid, current_vertical_offset, current_horizontal_offset) {
+      currenly_encountered_trees += 1
+    }
+  }
+  return currenly_encountered_trees
 }
 
 
