@@ -6,6 +6,7 @@ import (
   "os"
   "strconv"
   "strings"
+  "unicode"
 )
 
 type passport struct {
@@ -152,7 +153,10 @@ func checkHgt(hgt_value string) bool {
 }
 
 func checkHcl(hcl_value string) bool {
-  return true
+  if strings.HasPrefix(hcl_value, "#") {
+    return true
+  }
+  return false
 }
 
 var allowed_ecl_values = []string{
@@ -176,7 +180,18 @@ func checkEcl(ecl_value string) bool {
 }
 
 func checkPid(pid_value string) bool {
-  return true
+  var (
+    char rune
+  )
+  if len(pid_value) == 9 {
+    for _, char = range pid_value {
+      if !unicode.IsDigit(char) {
+        return false
+      }
+    }
+    return true
+  }
+  return false
 }
 
 

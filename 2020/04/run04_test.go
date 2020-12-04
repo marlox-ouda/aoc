@@ -191,12 +191,12 @@ func TestCheckEcl(t * testing.T) {
 
 func TestCheckPid(t * testing.T) {
   var given_result bool
-  given_result = checkPid("0123456789")
-  if !given_result {
-    t.Error("checkPid(\"0123456789\"), false given, true expected")
-  }
   given_result = checkPid("000000001")
+  if !given_result {
+    t.Error("checkPid(\"000000001\"), false given, true expected")
+  }
+  given_result = checkPid("0123456789")
   if given_result {
-    t.Error("checkPid(\"000000001\"), true given, false expected")
+    t.Error("checkPid(\"0123456789\"), true given, false expected")
   }
 }
