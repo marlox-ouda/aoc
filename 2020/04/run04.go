@@ -2,6 +2,7 @@ package main
 
 import (
   "bufio"
+  "io/ioutil"
   "fmt"
   "os"
   "strings"
@@ -246,13 +247,17 @@ func exampleOne() {
 
 
 func mainOne() {
-  var trees_number int
-  lines, err := readInput()
-  if err != nil {
-    fmt.Println(err)
+  var (
+    valid_passports_number int
+    input []byte
+    err error
+  )
+  input, err = ioutil.ReadFile("input4.txt")
+  if err == nil {
+    valid_passports_number = commonOne(string(input))
+    fmt.Printf("MainOne: %v\n", valid_passports_number)
   } else {
-    trees_number = countTreesOnDirection(lines, 3, 1)
-    fmt.Printf("MainOne: %v\n", trees_number)
+    fmt.Printf("MainOne: I/O erro : %s\n", err)
   }
 }
 
