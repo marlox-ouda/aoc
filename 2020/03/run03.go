@@ -146,38 +146,19 @@ func runOne(line string, verbose bool) bool {
  }
 
 func exampleOne() {
-  var (
-    count_valids int
-    line string
-  )
-  var lines = []string{
-    "1-3 a: abcde",
-    "1-3 b: cdefg",
-    "2-9 c: ccccccccc",
-  }
-  for _, line = range lines {
-    if runOne(line, true) {
-      count_valids += 1
-    }
-  }
-  fmt.Printf("ExampleOne: Final result: %v\n", count_valids)
+  var trees_number int
+  trees_number = countTreesOnDirection(example_geology, 3, 1)
+  fmt.Printf("ExampleOne: %v\n", trees_number)
 }
 
 func mainOne() {
-  var (
-    count_valids int
-    line string
-  )
+  var trees_number int
   lines, err := readInput()
   if err != nil {
     fmt.Println(err)
   } else {
-    for _, line = range lines {
-      if runOne(line, false) {
-        count_valids += 1
-      }
-    }
-    fmt.Printf("MainOne: Final result: %v\n", count_valids)
+    trees_number = countTreesOnDirection(lines, 3, 1)
+    fmt.Printf("MainOne: %v\n", trees_number)
   }
 }
 
