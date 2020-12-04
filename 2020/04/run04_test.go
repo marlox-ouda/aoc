@@ -2,6 +2,34 @@ package main
 
 import "testing"
 
+func TestExtractPassportLines(t *testing.T) {
+  var (
+    given_result []string
+    expected_result string
+  )
+  given_result = extractPassportLines(example_passwords_input)
+  if len(given_result) != 4 {
+    t.Errorf("len(extractPassportLines(<example>)), %s given, 4 expected", len(given_result))
+  } else {
+    expected_result = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm"
+    if given_result[0] != expected_result {
+      t.Errorf("extractPassportLines(<example>)[0], %s given, %s expected", given_result[0], expected_result)
+    }
+    expected_result = "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884\nhcl:#cfa07d byr:1929"
+    if given_result[1] != expected_result {
+      t.Errorf("extractPassportLines(<example>)[1], %s given, %s expected", given_result[1], expected_result)
+    }
+    expected_result = "hcl:#ae17e1 iyr:2013\neyr:2024\necl:brn pid:760753108 byr:1931\nhgt:179cm"
+    if given_result[2] != expected_result {
+      t.Errorf("extractPassportLines(<example>)[2], %s given, %s expected", given_result[2], expected_result)
+    }
+    expected_result = "hcl:#cfa07d eyr:2025 pid:166559648\niyr:2011 ecl:brn hgt:59in"
+    if given_result[3] != expected_result {
+      t.Errorf("extractPassportLines(<example>)[3], %s given, %s expected", given_result[3], expected_result)
+    }
+  }
+}
+
 func TestExtractPassportDataOne(t *testing.T) {
   var (
     given_result *passport
