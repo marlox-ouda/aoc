@@ -198,7 +198,6 @@ func checkPid(pid_value string) bool {
   return false
 }
 
-
 func commonOne(passports_blob string) int {
   var (
     valid_passports_number int
@@ -219,6 +218,13 @@ func commonOne(passports_blob string) int {
     }
   }
   return valid_passports_number
+}
+
+func checkPassport(pass *passport) bool {
+  if checkByr(pass.byr) && checkIyr(pass.iyr) && checkEyr(pass.eyr) && checkHgt(pass.hgt) && checkHcl(pass.hcl) && checkEcl(pass.ecl) && checkPid(pass.pid) {
+    return true
+  }
+  return false
 }
 
 func exampleOne() {
@@ -255,7 +261,7 @@ func commonTwo(passports_blob string) int {
   for _, passport_line = range passport_lines {
     pass, err = extractPassportData(passport_line)
     if err == nil {
-      if checkPassportRequiredField(pass) {
+      if checkPassport(pass) {
         valid_passports_number += 1
       }
     } else {
@@ -267,7 +273,7 @@ func commonTwo(passports_blob string) int {
 
 func exampleTwo() {
   var valid_passports_number int
-  valid_passports_number = commonOne(example_passwords_input)
+  valid_passports_number = commonTwo(example_passwords_input)
   fmt.Printf("ExampleTwo: %v\n", valid_passports_number)
 }
 
@@ -280,7 +286,7 @@ func mainTwo() {
   )
   input, err = ioutil.ReadFile("input4.txt")
   if err == nil {
-    valid_passports_number = commonOne(string(input))
+    valid_passports_number = commonTwo(string(input))
     fmt.Printf("MainTwo: %v\n", valid_passports_number)
   } else {
     fmt.Printf("MainTwo: I/O erro : %s\n", err)
