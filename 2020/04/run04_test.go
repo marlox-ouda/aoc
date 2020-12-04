@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func TestExtractPassportData(t *testing.T) {
+func TestExtractPassportDataOne(t *testing.T) {
   var (
     given_result *passport
     err error
@@ -33,7 +33,43 @@ func TestExtractPassportData(t *testing.T) {
         t.Errorf("extractPassport(<1>).pid, %s given, \"860033327\" expected", given_result.pid)
     }
     if given_result.cid != "147" {
-        t.Errorf("extractPassport(<1>).pid, %s given, \"147\" expected", given_result.cid)
+        t.Errorf("extractPassport(<1>).cid, %s given, \"147\" expected", given_result.cid)
+    }
+  }
+}
+
+func TestExtractPassportDataTwo(t *testing.T) {
+  var (
+    given_result *passport
+    err error
+  )
+  given_result, err = extractPassportData("iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884\nhcl:#cfa07d byr:1929")
+  if err != nil {
+    t.Errorf("extractPassport(<2>) raise error: %s", err)
+  } else {
+    if given_result.byr != "1929" {
+        t.Errorf("extractPassport(<2>).byr, %s given, \"1929\" expected", given_result.byr)
+    }
+    if given_result.iyr != "2013" {
+        t.Errorf("extractPassport(<2>).iyr, %s given, \"2013\" expected", given_result.iyr)
+    }
+    if given_result.eyr != "2023" {
+        t.Errorf("extractPassport(<2>).eyr, %s given, \"2023\" expected", given_result.eyr)
+    }
+    if given_result.hgt != "" {
+        t.Errorf("extractPassport(<2>).hgt, %s given, \"\" expected", given_result.hgt)
+    }
+    if given_result.hcl != "#cfa07d" {
+        t.Errorf("extractPassport(<2>).hcl, %s given, \"#cfa07d\" expected", given_result.hcl)
+    }
+    if given_result.ecl != "amb" {
+        t.Errorf("extractPassport(<2>).ecl, %s given, \"amb\" expected", given_result.ecl)
+    }
+    if given_result.pid != "028048884" {
+        t.Errorf("extractPassport(<2>).pid, %s given, \"028048884\" expected", given_result.pid)
+    }
+    if given_result.cid != "350" {
+        t.Errorf("extractPassport(<2>).cid, %s given, \"350\" expected", given_result.cid)
     }
   }
 }
