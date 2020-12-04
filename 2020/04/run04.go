@@ -88,6 +88,10 @@ func extractPassportData(password_line string) (*passport, error) {
   return &pass, nil
 }
 
+func checkPassportRequiredField(pass *passport) bool {
+  return true
+}
+
 var example_geology = []string{
   "..##.......",
   "#...#...#..",
