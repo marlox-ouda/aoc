@@ -153,8 +153,12 @@ func checkHgt(hgt_value string) bool {
 }
 
 func checkHcl(hcl_value string) bool {
+  var err error
   if strings.HasPrefix(hcl_value, "#") {
-    return true
+    _, err = strconv.ParseInt(hcl_value[1:], 16, 64)
+    if err == nil {
+      return true
+    }
   }
   return false
 }
