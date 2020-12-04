@@ -107,8 +107,24 @@ func checkHcl(hcl_value string) bool {
   return true
 }
 
+var allowed_ecl_values = []string{
+  "amb",
+  "blu",
+  "brn",
+  "gry",
+  "grn",
+  "hzl",
+  "oth",
+}
+
 func checkEcl(ecl_value string) bool {
-  return true
+  var checked_ecl_value string
+  for _, checked_ecl_value = range allowed_ecl_values {
+    if checked_ecl_value == ecl_value {
+      return true
+    }
+  }
+  return false
 }
 
 func checkPid(pid_value string) bool {

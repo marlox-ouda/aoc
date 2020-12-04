@@ -183,7 +183,7 @@ func TestCheckEcl(t * testing.T) {
   if !given_result {
     t.Error("checkEcl(\"brn\"), false given, true expected")
   }
-  given_result = checkByr("wat")
+  given_result = checkEcl("wat")
   if given_result {
     t.Error("checkEcl(\"wat\"), true given, false expected")
   }
