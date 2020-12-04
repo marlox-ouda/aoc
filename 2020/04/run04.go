@@ -95,6 +95,26 @@ func checkPassportRequiredField(pass *passport) bool {
   return false
 }
 
+func checkByr(byr_value string) bool {
+  return true
+}
+
+func checkHgt(hgt_value string) bool {
+  return true
+}
+
+func checkHcl(hcl_value string) bool {
+  return true
+}
+
+func checkEcl(ecl_value string) bool {
+  return true
+}
+
+func checkPid(pid_value string) bool {
+  return true
+}
+
 
 func commonOne(passports_blob string) int {
   var (
