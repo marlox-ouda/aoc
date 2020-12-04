@@ -7,6 +7,27 @@ import (
   "strings"
 )
 
+var example_geology = []string{
+  "..##.......",
+  "#...#...#..",
+  ".#....#..#.",
+  "..#.#...#.#",
+  ".#...##..#.",
+  "..#.##.....",
+  ".#.#.#....#",
+  ".#........#",
+  "#.##...#...",
+  "#...##....#",
+  ".#..#...#.#",
+}
+
+// isTree return whether there is a three or no at the given position
+// position is given 0 based and take top left corner as (0, 0) position
+func isTree(grid []string, vert_offset int, horizontal_offset int) bool {
+  return false
+}
+
+
 // checkPolicyOne if letter occurence in password is between min and max
 func checkPolicyOne(min int, max int, letter byte, password string) bool {
   var count int
