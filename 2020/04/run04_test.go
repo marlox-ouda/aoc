@@ -102,6 +102,33 @@ func TestExtractPassportDataTwo(t *testing.T) {
   }
 }
 
+func TestCheckPassportRequiredField(t * testing.T) {
+  var (
+    given_result bool
+    pass passport
+  )
+  pass = passport{"1937", "2017", "2020", "183cm", "#fffffd", "gry", "860033327", "147"}
+  given_result = checkPassportRequiredField(&pass)
+  if !given_result {
+    t.Error("checkPassportRequiredField(<0>), false given, true expected")
+  }
+  pass = passport{"1929", "2013", "2023", "", "#cfa07d", "amb", "028048884", "350"}
+  given_result = checkPassportRequiredField(&pass)
+  if given_result {
+    t.Error("checkPassportRequiredField(<1>), true given, false expected")
+  }
+  pass = passport{"1931", "2013", "2024", "179cm", "#ae17e1", "brn", "760753108", ""}
+  given_result = checkPassportRequiredField(&pass)
+  if !given_result {
+    t.Error("checkPassportRequiredField(<2>), false given, true expected")
+  }
+  pass = passport{"", "2011", "2025", "59in", "#cfa07d", "brn", "166559648", ""}
+  given_result = checkPassportRequiredField(&pass)
+  if given_result {
+    t.Error("checkPassportRequiredField(<3>), true given, false expected")
+  }
+}
+
 func TestIsTree(t *testing.T) {
   var givenResult bool
   givenResult = isTree(example_geology, 0, 0)
