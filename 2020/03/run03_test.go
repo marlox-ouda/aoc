@@ -2,19 +2,31 @@ package main
 
 import "testing"
 
-func TestCheckPolicyOne(t *testing.T) {
+func TestIsTree(t *testing.T) {
   var givenResult bool
-  givenResult = checkPolicyOne(1, 3, 'a', "abcde")
-  if !givenResult {
-    t.Error("checkPolicyOne(1, 3, 'a', \"abcde\") give false, true expected")
-  }
-  givenResult = checkPolicyOne(1, 3, 'b', "cdefg")
+  givenResult = isTree(example_geology, 0, 0)
   if givenResult {
-    t.Error("checkPolicyOne(1, 3, 'b', \"cdefg\") gives true, false expected")
+    t.Error("isTree(example_geology, 0, 0) give true, false expected")
   }
-  givenResult = checkPolicyOne(2, 9, 'c', "ccccccccc")
+  givenResult = isTree(example_geology, 1, 3)
+  if givenResult {
+    t.Error("isTree(example_geology, 1, 3) give true, false expected")
+  }
+  givenResult = isTree(example_geology, 2, 6)
   if !givenResult {
-    t.Error("checkPolicyOne(1, 3, 'c', \"ccccccccc\") gives false, true expected")
+    t.Error("isTree(example_geology, 2, 6) give false, true expected")
+  }
+  givenResult = isTree(example_geology, 3, 9)
+  if givenResult {
+    t.Error("isTree(example_geology, 1, 3) give true, false expected")
+  }
+  givenResult = isTree(example_geology, 4, 12)
+  if !givenResult {
+    t.Error("isTree(example_geology, 2, 6) give false, true expected")
+  }
+  givenResult = isTree(example_geology, 5, 15)
+  if !givenResult {
+    t.Error("isTree(example_geology, 2, 6) give false, true expected")
   }
 }
 
