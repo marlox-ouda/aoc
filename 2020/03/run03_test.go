@@ -30,6 +30,38 @@ func TestIsTree(t *testing.T) {
   }
 }
 
+func TestCountTreesOnDirection(t *testing.T) {
+  var (
+    given_result int
+    expected_result int
+  )
+  given_result = countTreesOnDirection(example_geology, 1, 1)
+  expected_result = 2
+  if given_result != expected_result {
+    t.Errorf("countTreesOnDirection(example_geology, 1, 1) give %v, %v expected", given_result, expected_result)
+  }
+  given_result = countTreesOnDirection(example_geology, 3, 1)
+  expected_result = 7
+  if given_result != expected_result {
+    t.Errorf("countTreesOnDirection(example_geology, 3, 1) give %v, %v expected", given_result, expected_result)
+  }
+  given_result = countTreesOnDirection(example_geology, 5, 1)
+  expected_result = 3
+  if given_result != expected_result {
+    t.Errorf("countTreesOnDirection(example_geology, 5, 1) give %v, %v expected", given_result, expected_result)
+  }
+  given_result = countTreesOnDirection(example_geology, 7, 1)
+  expected_result = 4
+  if given_result != expected_result {
+    t.Errorf("countTreesOnDirection(example_geology, 7, 1) give %v, %v expected", given_result, expected_result)
+  }
+  given_result = countTreesOnDirection(example_geology, 1, 2)
+  expected_result = 2
+  if given_result != expected_result {
+    t.Errorf("countTreesOnDirection(example_geology, 1, 2) give %v, %v expected", given_result, expected_result)
+  }
+}
+
 func TestCheckPolicyTwo(t *testing.T) {
   var givenResult bool
   givenResult = checkPolicyTwo(1, 3, 'a', "abcde")
