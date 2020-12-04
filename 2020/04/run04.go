@@ -133,7 +133,22 @@ func checkEyr(eyr_value string) bool {
 }
 
 func checkHgt(hgt_value string) bool {
-  return true
+  var (
+    hgt_int int
+    err error
+  )
+  if strings.HasSuffix(hgt_value, "in") {
+    hgt_int, err = strconv.Atoi(hgt_value[:len(hgt_value)-2])
+    if err == nil && 59 <= hgt_int && hgt_int <= 76 {
+      return true
+    }
+  } else if strings.HasSuffix(hgt_value, "cm") {
+    hgt_int, err = strconv.Atoi(hgt_value[:len(hgt_value)-2])
+    if err == nil && 150 <= hgt_int && hgt_int <= 193 {
+      return true
+    }
+  }
+  return false
 }
 
 func checkHcl(hcl_value string) bool {
