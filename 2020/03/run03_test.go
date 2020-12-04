@@ -62,6 +62,18 @@ func TestCountTreesOnDirection(t *testing.T) {
   }
 }
 
+func TestMultiply(t *testing.T) {
+  var (
+    given_result int
+    expected_result int
+  )
+  given_result = multiply([]int{2, 7, 3, 4, 2})
+  expected_result = 336
+  if given_result != expected_result {
+    t.Errorf("multiply: %v expected, %v given", expected_result, given_result)
+  }
+}
+
 func TestCheckPolicyTwo(t *testing.T) {
   var givenResult bool
   givenResult = checkPolicyTwo(1, 3, 'a', "abcde")
