@@ -108,6 +108,30 @@ func checkByr(byr_value string) bool {
   return false
 }
 
+func checkIyr(iyr_value string) bool {
+  var (
+    iyr_int int
+    err error
+  )
+  iyr_int, err = strconv.Atoi(iyr_value)
+  if err == nil && 2010 <= iyr_int && iyr_int <= 2020 {
+    return true
+  }
+  return false
+}
+
+func checkEyr(eyr_value string) bool {
+  var (
+    eyr_int int
+    err error
+  )
+  eyr_int, err = strconv.Atoi(eyr_value)
+  if err == nil && 2020 <= eyr_int && eyr_int <= 2030 {
+    return true
+  }
+  return false
+}
+
 func checkHgt(hgt_value string) bool {
   return true
 }
