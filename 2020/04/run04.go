@@ -19,7 +19,44 @@ type passport struct {
 }
 
 func extractPassportData(password_line string) (*passport, error) {
-  var pass passport
+  var (
+    pass passport
+    password_items []string
+    key_value []string
+    item string
+    key string
+    value string
+  )
+  password_line = strings.Trim(password_line, "\n")
+  password_line = strings.ReplaceAll(password_line, "\n", " ")
+  password_items = strings.Split(password_line, " ")
+  for _, item = range password_items {
+    key_value = strings.SplitN(item, ":", 2)
+    if len(key_value) != 2 {
+      return &pass, fmt.Errorf("Fail to extract key:value pair from '%s' in %s", item, password_line)
+    }
+    value = key_value[1]
+    switch key = key_value[0]; key {
+    case "byr":
+      pass.byr = value
+    case "iyr":
+      pass.iyr = value
+    case "eyr":
+      pass.eyr = value
+    case "hgt":
+      pass.hgt = value
+    case "hcl":
+      pass.hcl = value
+    case "ecl":
+      pass.ecl = value
+    case "pid":
+      pass.pid = value
+    case "cid":
+      pass.cid = value
+    default:
+      return &pass, fmt.Errorf("Unkown key '%s' with value '%s' from '%s'", key, value, password_line)
+    }
+  }
   return &pass, nil
 }
 
