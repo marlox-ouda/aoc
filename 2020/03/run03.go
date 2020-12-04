@@ -145,56 +145,43 @@ func mainOne() {
   }
 }
 
-func runTwo(line string, verbose bool) bool {
-  if verbose {
-    fmt.Printf("Input: %s -> ", line)
+func runTwo(grid []string) int {
+  var (
+    trees_number int
+    trees_numbers []int
+    direction []int
+    horizontal_step int
+    vertical_step int
+  )
+  directions := [][]int{
+    []int{1, 1},
+    []int{3, 1},
+    []int{5, 1},
+    []int{7, 1},
+    []int{1, 2},
   }
-  min, max, letter, password, err := convertLine(line)
-  if err == nil {
-    result := checkPolicyTwo(min, max, letter, password)
-    if verbose {
-      fmt.Printf("Output: %t\n", result)
-    }
-    return result
-  } else {
-    fmt.Printf("MainOne: Error: %s\n", err)
+
+  for _, direction = range directions {
+    horizontal_step = direction[0]
+    vertical_step = direction[1]
+    fmt.Printf("Direction: (%v, %v) -> ", horizontal_step, vertical_step)
+    trees_number = countTreesOnDirection(grid, horizontal_step, vertical_step)
+    fmt.Printf("%v tree(s)\n", trees_number)
+    trees_numbers = append(trees_numbers, trees_number)
   }
-  return false
+  return multiply(trees_numbers)
  }
 
 func exampleTwo() {
-  var (
-    count_valids int
-    line string
-  )
-  var lines = []string{
-    "1-3 a: abcde",
-    "1-3 b: cdefg",
-    "2-9 c: ccccccccc",
-  }
-  for _, line = range lines {
-    if runTwo(line, true) {
-      count_valids += 1
-    }
-  }
-  fmt.Printf("ExampleTwo: Final result: %v\n", count_valids)
+  fmt.Printf("ExampleTwo: %v\n", runTwo(example_geology))
 }
 
 func mainTwo() {
-  var (
-    count_valids int
-    line string
-  )
   lines, err := readInput()
   if err != nil {
     fmt.Println(err)
   } else {
-    for _, line = range lines {
-      if runTwo(line, false) {
-        count_valids += 1
-      }
-    }
-    fmt.Printf("MainTwo: Final result: %v\n", count_valids)
+    fmt.Printf("MainTwo: %v\n", runTwo(lines))
   }
 }
 
