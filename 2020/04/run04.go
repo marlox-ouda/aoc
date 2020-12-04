@@ -4,6 +4,7 @@ import (
   "io/ioutil"
   "fmt"
   "os"
+  "strconv"
   "strings"
 )
 
@@ -96,7 +97,15 @@ func checkPassportRequiredField(pass *passport) bool {
 }
 
 func checkByr(byr_value string) bool {
-  return true
+  var (
+    byr_int int
+    err error
+  )
+  byr_int, err = strconv.Atoi(byr_value)
+  if err == nil && 1920 <= byr_int && byr_int <= 2002 {
+    return true
+  }
+  return false
 }
 
 func checkHgt(hgt_value string) bool {
