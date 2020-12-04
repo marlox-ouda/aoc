@@ -4,7 +4,6 @@ import (
   "bufio"
   "fmt"
   "os"
-  "strings"
 )
 
 var example_geology = []string{
@@ -66,48 +65,6 @@ func multiply(values []int) int {
     total *= current_value
   }
   return total
-}
-
-
-// checkPolicyOne if letter occurence in password is between min and max
-func checkPolicyOne(min int, max int, letter byte, password string) bool {
-  var count int
-  count = strings.Count(password, string(letter))
-  if min <= count && count <= max {
-    return true
-  }
-  return false
-}
-
-// checkPolicyTwo if letter is present at only one given of both
-// given position in the password
-func checkPolicyTwo(pos_a int, pos_b int, letter byte, password string) bool {
-  var (
-    check_a bool
-    check_b bool
-  )
-  check_a = (password[pos_a - 1] == letter)
-  check_b = (password[pos_b - 1] == letter)
-  return check_a != check_b
-}
-
-// convertLine
-// read element from the given string line
-func convertLine(line string) (int, int, byte, string, error) {
-  var (
-    number_a int
-    number_b int
-    letter byte
-    password string
-    err error
-    parsed_items_nb int
-  )
-  parsed_items_nb, err = fmt.Fscanf(strings.NewReader(line), "%d-%d %c: %s",
-                                   &number_a, &number_b, &letter, &password)
-  if err == nil && parsed_items_nb < 4 {
-    err = fmt.Errorf("Only able to parse %v/4 items on %s", parsed_items_nb, line)
-  }
-  return number_a, number_b, letter, password, err
 }
 
 // Read input1.txt file and return a slice of int
