@@ -4,10 +4,10 @@ import "testing"
 
 func TestExtractPassportData(t *testing.T) {
   var (
-    given_result *password
+    given_result *passport
     err error
   )
-  given_result, err = extractPassport("ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm")
+  given_result, err = extractPassportData("ecl:gry pid:860033327 eyr:2020 hcl:#fffffd\nbyr:1937 iyr:2017 cid:147 hgt:183cm")
   if err != nil {
     t.Errorf("extractPassport(<1>) raise error: %s", err)
   } else {
