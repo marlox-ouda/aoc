@@ -35,6 +35,11 @@ func isTree(grid []string, vertical_offset int, horizontal_offset int) bool {
   return false
 }
 
+// count encounter trees from the top to the bottom of the grid
+func countTreesOnDirection(grid []string, horizontal_step int, vertical_step int) int {
+  return 2
+}
+
 
 // checkPolicyOne if letter occurence in password is between min and max
 func checkPolicyOne(min int, max int, letter byte, password string) bool {
