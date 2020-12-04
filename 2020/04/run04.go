@@ -216,7 +216,7 @@ func readInput( ) ([]string, error) {
   return lines, nil
 }
 
-func exampleOne() {
+func commonOne(passports_blob string) int {
   var (
     valid_passports_number int
     passport_lines []string
@@ -224,7 +224,7 @@ func exampleOne() {
     pass *passport
     err error
   )
-  passport_lines = extractPassportLines(example_passwords_input)
+  passport_lines = extractPassportLines(passports_blob)
   for _, passport_line = range passport_lines {
     pass, err = extractPassportData(passport_line)
     if err == nil {
@@ -235,8 +235,15 @@ func exampleOne() {
       fmt.Printf("Error: %s\n", err)
     }
   }
+  return valid_passports_number
+}
+
+func exampleOne() {
+  var valid_passports_number int
+  valid_passports_number = commonOne(example_passwords_input)
   fmt.Printf("ExampleOne: %v\n", valid_passports_number)
 }
+
 
 func mainOne() {
   var trees_number int
