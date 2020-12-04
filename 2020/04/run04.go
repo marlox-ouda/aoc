@@ -217,9 +217,25 @@ func readInput( ) ([]string, error) {
 }
 
 func exampleOne() {
-  var trees_number int
-  trees_number = countTreesOnDirection(example_geology, 3, 1)
-  fmt.Printf("ExampleOne: %v\n", trees_number)
+  var (
+    valid_passports_number int
+    passport_lines []string
+    passport_line string
+    pass *passport
+    err error
+  )
+  passport_lines = extractPassportLines(example_passwords_input)
+  for _, passport_line = range passport_lines {
+    pass, err = extractPassportData(passport_line)
+    if err == nil {
+      if checkPassportRequiredField(pass) {
+        valid_passports_number += 1
+      }
+    } else {
+      fmt.Printf("Error: %s\n", err)
+    }
+  }
+  fmt.Printf("ExampleOne: %v\n", valid_passports_number)
 }
 
 func mainOne() {
