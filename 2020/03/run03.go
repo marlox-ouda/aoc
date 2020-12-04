@@ -55,6 +55,19 @@ func countTreesOnDirection(grid []string, horizontal_step int, vertical_step int
   return currenly_encountered_trees
 }
 
+// multiply every component of the slice between them and return the value
+func multiply(values []int) int {
+  var (
+    total int
+    current_value int
+  )
+  total = 1
+  for _, current_value = range values {
+    total *= current_value
+  }
+  return total
+}
+
 
 // checkPolicyOne if letter occurence in password is between min and max
 func checkPolicyOne(min int, max int, letter byte, password string) bool {
