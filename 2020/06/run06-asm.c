@@ -75,14 +75,14 @@ void _start() {
   );
   if (fd < 0)
     sys_exit(-1);
+  //if (fstat(fd, &st) < 0)
+  //  return -2;
   /*asm volatile (
       "syscall"
       : "=r" (eax)
       : "0" (SYS_STAT), "D" (fd), "S" (&st)
       : "rcx", "r11"
   );*/
-  //if (fstat(fd, &st) < 0)
-  //  return -2;
   const unsigned int size = 16711;
   // l’ensemble du fichier est mappé en mémoire en un bloc
   //if ((addr = mmap(NULL, 16711, PROT_READ, MAP_PRIVATE, fd, 0)) < 0)
@@ -96,7 +96,7 @@ void _start() {
       : "0" (SYS_MMAP), "D" (NULL), "S" (size), "d" (PROT_READ), "r" (r10), "r" (r8), "r" (r9)
       : "rcx", "r11", "memory"
   );
-  if (addr == -1)
+  if (addr == MAP_FAILED)
     sys_exit(-3);
   //close(fd);
   asm volatile (
