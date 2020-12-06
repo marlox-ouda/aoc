@@ -3,7 +3,6 @@
 #define CHAR_ZERO 48
 #define OUTPUT_LEN 50
 
-#define NULL 0
 #define O_RDONLY 0
 #define O_NOATIME 262144
 #define MAP_PRIVATE 2
@@ -42,6 +41,22 @@ static inline void sys_exit(int retcode) {
   );
 }
 
+struct stat {
+  unsigned long st_dev;
+  unsigned long st_ino;
+  unsigned int st_mode;
+  unsigned long st_nlink;
+  unsigned int st_uid;
+  unsigned int st_gid;
+  unsigned long st_rdev;
+  unsigned long st_size;
+  unsigned long st_blksize;
+  unsigned long st_blocks;
+  unsigned long st_atime;
+  unsigned long st_mtime;
+  unsigned long st_ctime;
+};
+
 const char* const path = "/home/user/aoc/2020/06/input6.txt";
 
 void _start() {
@@ -58,7 +73,7 @@ void _start() {
   unsigned short declaration_run_one = 0;
   // somme du nombre de déclarations communes à chaque groupe
   unsigned short declaration_run_two = 0;
-  //struct stat st;
+  struct stat st;
   char output[OUTPUT_LEN];
   // register
   register long eax asm("eax");
@@ -77,15 +92,16 @@ void _start() {
     sys_exit(-1);
   //if (fstat(fd, &st) < 0)
   //  return -2;
-  /*asm volatile (
+  asm volatile (
       "syscall"
       : "=r" (eax)
       : "0" (SYS_STAT), "D" (fd), "S" (&st)
       : "rcx", "r11"
-  );*/
-  const unsigned int size = 16711;
+  );
+  if (eax < 0)
+    sys_exit(-2);
   // l’ensemble du fichier est mappé en mémoire en un bloc
-  //if ((addr = mmap(NULL, 16711, PROT_READ, MAP_PRIVATE, fd, 0)) < 0)
+  //if ((addr = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) < 0)
     //return -3;
   r10 = MAP_PRIVATE;
   r8 = fd;
@@ -93,7 +109,7 @@ void _start() {
   asm volatile (
       "syscall"
       : "=a" (addr)
-      : "0" (SYS_MMAP), "D" (NULL), "S" (size), "d" (PROT_READ), "r" (r10), "r" (r8), "r" (r9)
+      : "0" (SYS_MMAP), "D" (0), "S" (st.st_size), "d" (PROT_READ), "r" (r10), "r" (r8), "r" (r9)
       : "rcx", "r11", "memory"
   );
   if (addr == MAP_FAILED)
@@ -105,7 +121,7 @@ void _start() {
       : "0" (SYS_CLOSE), "D" (fd)
       : "rcx", "r11"
   );
-  last_addr = addr + size;
+  last_addr = addr + st.st_size;
   while (addr < last_addr) {
     if (*addr == CHAR_NEWLINE) {
       if (current_declaration == 0) {
