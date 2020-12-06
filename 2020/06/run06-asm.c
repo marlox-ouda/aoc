@@ -165,7 +165,7 @@ void _start() {
   asm volatile (
       "syscall"
       : "=r" (eax)
-      : "0" (SYS_WRITE), "D" (STDOUT), "S" (addr), "d" (output_buffer + OUTPUT_LEN - output_char - 1)
+      : "0" (SYS_WRITE), "D" (STDOUT), "S" (output_char), "d" (output_buffer + OUTPUT_LEN - output_char - 1)
       : "rcx", "r11" , "memory"
   );
   //return 0;
