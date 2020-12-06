@@ -1,15 +1,11 @@
 #define _GNU_SOURCE 1
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 
-//uint16_t bit_count(uint32_t);
-
-unsigned short bit_count(unsigned int value) {
+static inline unsigned short bit_count(unsigned int value) {
   unsigned short idx;
   unsigned short count = 0;
   for (idx = 0; idx < 26; idx++)
@@ -17,6 +13,9 @@ unsigned short bit_count(unsigned int value) {
       count += 1;
   return count;
 }
+
+#define CHAR_NEWLINE 10
+#define CHAR_A 97
 
 int main() {
   int fd;
@@ -29,7 +28,7 @@ int main() {
   unsigned short declaration_run_two = 0;
   struct stat st;
 
-  if ((fd = open("input6.txt", O_RDONLY | O_NOATIME)) < 0)
+  if ((fd = open("/home/user/aoc/2020/06/input6.txt", O_RDONLY | O_NOATIME)) < 0)
     return -1;
   if (fstat(fd, &st) < 0)
     return -2;
@@ -51,8 +50,8 @@ int main() {
         current_added_group_declaration |= current_declaration;
         current_declaration = 0;
       }
-    } else if (97 <= *addr < 97+26) {
-      current_declaration |= (1 << (*addr - 97));
+    } else if (CHAR_A <= *addr && *addr < CHAR_A+26) {
+      current_declaration |= (1 << (*addr - CHAR_A));
     }
     addr += 1;
   }
