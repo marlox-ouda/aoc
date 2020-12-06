@@ -44,7 +44,7 @@ int main() {
     return -3;
   last_addr = addr + st.st_size;
   while (addr < last_addr) {
-    if (*addr == 10) {
+    if (*addr == CHAR_NEWLINE) {
       if (current_declaration == 0) {
         // cas d’un nouveau groupe
         // note: current_declaration == 0 implique que la branche else
