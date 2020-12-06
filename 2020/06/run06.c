@@ -40,8 +40,9 @@ int main() {
   if (fstat(fd, &st) < 0)
     return -2;
   // l’ensemble du fichier est mappé en mémoire en un bloc
-  if ((addr = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) < 0)
+  if ((addr = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
     return -3;
+  close(fd);
   last_addr = addr + st.st_size;
   while (addr < last_addr) {
     if (*addr == CHAR_NEWLINE) {
@@ -71,6 +72,4 @@ int main() {
   declaration_run_one += bit_count(current_added_group_declaration);
   declaration_run_two += bit_count(current_shared_group_declaration);
   printf("%hu\t%hu\n", declaration_run_one, declaration_run_two);
-  close(fd);
-
 }
