@@ -14,6 +14,7 @@
 #define SYS_CLOSE 3
 #define SYS_STAT 5
 #define SYS_MMAP 9
+#define SYS_MUNMAP 11
 #define SYS_EXIT 60
 #define SYS_FSYNC 74
 
@@ -58,6 +59,7 @@ struct stat {
 
 void _start() {
   int fd;
+  const char * first_addr;
   const char * addr;
   const char * last_addr;
   // ensemble des déclarations associées à une personne
@@ -108,11 +110,11 @@ void _start() {
   r9 = 0;
   asm volatile (
       "syscall"
-      : "=a" (addr)
+      : "=a" (first_addr)
       : "0" (SYS_MMAP), "D" (0), "S" (st.st_size), "d" (PROT_READ), "r" (r10), "r" (r8), "r" (r9)
       : "rcx", "r11", "memory"
   );
-  if (addr == MAP_FAILED)
+  if (first_addr == MAP_FAILED)
     sys_exit(-3);
   //close(fd);
   asm volatile (
@@ -121,7 +123,8 @@ void _start() {
       : "0" (SYS_CLOSE), "D" (fd)
       : "rcx", "r11"
   );
-  last_addr = addr + st.st_size;
+  last_addr = first_addr + st.st_size;
+  addr = first_addr;
   while (addr < last_addr) {
     if (*addr == CHAR_NEWLINE) {
       if (current_declaration == 0) {
@@ -147,6 +150,13 @@ void _start() {
     }
     addr += 1;
   }
+  //munmap(first_addr, st.st_size);
+  asm volatile (
+      "syscall"
+      : "=r" (eax)
+      : "0" (SYS_MUNMAP), "D" (first_addr), "S" (st.st_size)
+      : "rcx", "r11"
+  );
   declaration_run_one += bit_count(current_added_group_declaration);
   declaration_run_two += bit_count(current_shared_group_declaration);
   //printf("%hu\t%hu\n", declaration_run_one, declaration_run_two);

@@ -21,8 +21,9 @@ static inline unsigned short bit_count(unsigned int value) {
 
 int main() {
   int fd;
-  char * addr;
-  char * last_addr;
+  const char * first_addr;
+  const char * addr;
+  const char * last_addr;
   // ensemble des déclarations associées à une personne
   unsigned int current_declaration = 0;
   // ensemble des déclarations communes à chaque membre du groupe
@@ -40,10 +41,11 @@ int main() {
   if (fstat(fd, &st) < 0)
     return -2;
   // l’ensemble du fichier est mappé en mémoire en un bloc
-  if ((addr = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
+  if ((first_addr = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
     return -3;
   close(fd);
-  last_addr = addr + st.st_size;
+  last_addr = first_addr + st.st_size;
+  addr = first_addr;
   while (addr < last_addr) {
     if (*addr == CHAR_NEWLINE) {
       if (current_declaration == 0) {
@@ -69,6 +71,7 @@ int main() {
     }
     addr += 1;
   }
+  munmap((char*)first_addr, st.st_size);
   declaration_run_one += bit_count(current_added_group_declaration);
   declaration_run_two += bit_count(current_shared_group_declaration);
   printf("%hu\t%hu\n", declaration_run_one, declaration_run_two);
