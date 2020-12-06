@@ -7,6 +7,7 @@
 #define O_NOATIME 262144
 #define MAP_PRIVATE 2
 #define PROT_READ 1
+#define MAP_FAILED ((void *) -1)
 
 #define SYS_OPEN 2
 #define SYS_WRITE 1
@@ -17,8 +18,6 @@
 #define SYS_FSYNC 74
 
 #define STDOUT 1
-
-#define MAP_FAILED ((void *) -1)
 
 // calcule le nombre de bit à 1 dans un entier
 // (sur les 26 premiers bit uniquement)
@@ -57,12 +56,10 @@ struct stat {
   unsigned long st_ctime;
 };
 
-const char* const path = "/home/user/aoc/2020/06/input6.txt";
-
 void _start() {
   int fd;
-  char * addr;
-  char * last_addr;
+  const char * addr;
+  const char * last_addr;
   // ensemble des déclarations associées à une personne
   unsigned int current_declaration = 0;
   // ensemble des déclarations communes à chaque membre du groupe
@@ -74,12 +71,15 @@ void _start() {
   // somme du nombre de déclarations communes à chaque groupe
   unsigned short declaration_run_two = 0;
   struct stat st;
-  char output[OUTPUT_LEN];
+  char * output_char;
+  char output_buffer[OUTPUT_LEN];
   // register
   register long eax asm("eax");
   register long r10 asm("r10");
   register long r8 asm("r8");
   register long r9 asm("r9");
+  // hardcoded path
+  const char* const path = "/home/user/aoc/2020/06/input6.txt";
 
   //if ((fd = open("/home/user/aoc/2020/06/input6.txt", O_RDONLY | O_NOATIME)) < 0)
   asm volatile (
@@ -150,23 +150,24 @@ void _start() {
   declaration_run_one += bit_count(current_added_group_declaration);
   declaration_run_two += bit_count(current_shared_group_declaration);
   //printf("%hu\t%hu\n", declaration_run_one, declaration_run_two);
-  addr = output + OUTPUT_LEN;
-  *(--addr) = '\0';
-  *(--addr) = '\n';
+  output_char = output_buffer + OUTPUT_LEN;
+  *(--output_char) = '\0';
+  *(--output_char) = '\n';
   while (declaration_run_two != 0) {
-    *(--addr) = CHAR_ZERO + (declaration_run_two % 10);
+    *(--output_char) = CHAR_ZERO + (declaration_run_two % 10);
     declaration_run_two = declaration_run_two / 10;
   }
-  *(--addr) = '\t';
+  *(--output_char) = '\t';
   while (declaration_run_one != 0) {
-    *(--addr) = CHAR_ZERO + (declaration_run_one % 10);
+    *(--output_char) = CHAR_ZERO + (declaration_run_one % 10);
     declaration_run_one = declaration_run_one / 10;
   }
   asm volatile (
       "syscall"
       : "=r" (eax)
-      : "0" (SYS_WRITE), "D" (STDOUT), "S" (addr), "d" (output + OUTPUT_LEN - addr - 1)
+      : "0" (SYS_WRITE), "D" (STDOUT), "S" (addr), "d" (output_buffer + OUTPUT_LEN - output_char - 1)
       : "rcx", "r11" , "memory"
   );
+  //return 0;
   sys_exit(0);
 }
