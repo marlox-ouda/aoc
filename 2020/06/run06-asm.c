@@ -4,7 +4,11 @@
 #define OUTPUT_LEN 50
 
 #define O_RDONLY 0
+#define O_WRONLY 1
+#define O_CREAT 64
+#define O_TRUNC 512
 #define O_NOATIME 262144
+
 #define MAP_PRIVATE 2
 #define PROT_READ 1
 #define MAP_FAILED ((void *) -1)
@@ -82,6 +86,7 @@ void _start() {
   register long r9 asm("r9");
   // hardcoded path
   const char* const path = "/home/user/aoc/2020/06/input6.txt";
+  const char* const output_path = "/tmp/output6.txt";
 
   //if ((fd = open("/home/user/aoc/2020/06/input6.txt", O_RDONLY | O_NOATIME)) < 0)
   asm volatile (
@@ -172,11 +177,26 @@ void _start() {
     *(--output_char) = CHAR_ZERO + (declaration_run_one % 10);
     declaration_run_one = declaration_run_one / 10;
   }
+  // output in a file is 66% faster (0.09s instead of 0.13s in STDOUT)
+  asm volatile (
+      "syscall"
+      : "=a" (fd)
+      : "0" (SYS_OPEN), "D" (output_path), "S" (O_WRONLY | O_CREAT | O_TRUNC), "d" (0777)
+      : "rcx", "r11", "memory"
+  );
+  if (fd < 0)
+    sys_exit(-4);
   asm volatile (
       "syscall"
       : "=r" (eax)
-      : "0" (SYS_WRITE), "D" (STDOUT), "S" (output_char), "d" (output_buffer + OUTPUT_LEN - output_char - 1)
+      : "0" (SYS_WRITE), "D" (fd), "S" (output_char), "d" (output_buffer + OUTPUT_LEN - output_char - 1)
       : "rcx", "r11" , "memory"
+  );
+  asm volatile (
+      "syscall"
+      : "=r" (eax)
+      : "0" (SYS_CLOSE), "D" (fd)
+      : "rcx", "r11"
   );
   //return 0;
   sys_exit(0);
