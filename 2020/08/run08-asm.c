@@ -15,18 +15,38 @@
 //******************************************************************************
 // Macros related to system call and I/O management
 
+#define ARCH X86_64
 // Syscall definition (x86_64 only)
-#define SYS_OPEN 2
-#define SYS_WRITE 1
-#define SYS_CLOSE 3
-#define SYS_STAT 5
-#define SYS_MMAP 9
-#define SYS_MUNMAP 11
-#define SYS_EXIT 60
-#define SYS_FSYNC 74
+#if ARCH == X86_64
+  #define SYS_OPEN 2
+  #define SYS_WRITE 1
+  #define SYS_CLOSE 3
+  #define SYS_STAT 5
+  #define SYS_MMAP 9
+  #define SYS_MUNMAP 11
+  #define SYS_EXIT 60
+  #define SYS_FSYNC 74
+#endif
 
 // Entrypoint definition (x86_64 only)
-#define ENTRYPOINT _start
+#if ARCH == X86_64
+  #define ENTRYPOINT _start
+#endif
+
+// Assembly instructions (x86_64 only)
+#if ARCH == X86_64
+  #define SYSCALL_INTR "syscall"
+  #define SYSCALL_MODIFIED_REGS "rcx", "r11"
+  #define SYSCALL_OUTPUT_REG "eax"
+  #define SYSCALL_ARG1_REG "0"
+  #define SYSCALL_ARG2_REG "D"
+  #define SYSCALL_ARG3_REG "S"
+  #define SYSCALL_ARG4_REG "d"
+  #define SYSCALL_ARG5_REG "r10"
+  #define SYSCALL_ARG6_REG "r8"
+  #define SYSCALL_ARG7_REG "r9"
+  // define syscall register
+#endif
 
 // File mode macros
 #define O_RDONLY 0
@@ -319,7 +339,7 @@ static inline char * prepend_short_in_buf(char *buf, short value) {
 void ENTRYPOINT() {
   // hardcoded path
   const char* const input_path = "/home/user/aoc/2020/08/input8.txt";
-  //const char* const output_path = "/tmp/output8.txt";
+  const char* const output_path = "/tmp/output8.txt";
 
   const char * addr;
   const char * last_addr;
@@ -451,7 +471,7 @@ void ENTRYPOINT() {
   *(--output_char) = '\t';
   output_char = prepend_short_in_buf(output_char, run1_accumulator);
 
-  print(output_char, (output_buffer + OUTPUT_BUFFER_LEN - output_char - 1));
-  //write_in_file(output_path, output_char, (output_buffer + OUTPUT_LEN - output_char - 1));
+  //print(output_char, (output_buffer + OUTPUT_BUFFER_LEN - output_char - 1));
+  write_in_file(output_path, output_char, (output_buffer + OUTPUT_BUFFER_LEN - output_char - 1));
   sys_exit(SUCCESS_CODE);
 }
