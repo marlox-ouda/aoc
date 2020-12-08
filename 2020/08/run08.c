@@ -15,7 +15,7 @@
 #define CHAR_MOINS 45
 
 typedef char keyword_t;
-typedef char bool_t;
+typedef unsigned char bool_t;
 
 static const keyword_t ACCUMULATOR = 1;
 static const keyword_t NOP = 2;
@@ -42,9 +42,11 @@ int main() {
   struct instruction_t * current_instruction;
   struct instruction_t * modified_instruction;
   struct instruction_t * last_instruction;
+  bool_t checked_bit = TRUE;
   short value;
   short position = 0;
-  short accumulator = 0;
+  short run1_accumulator = 0;
+  short run2_accumulator = 0;
   bool_t success = FALSE;
 
   if ((fd = open("/home/user/aoc/2020/08/input8.txt", O_RDONLY | O_NOATIME)) < 0)
@@ -114,7 +116,7 @@ int main() {
     } else {
       ++position;
       if (current_instruction->keyword == ACCUMULATOR) {
-        accumulator += current_instruction->value;
+        run1_accumulator += current_instruction->value;
       }
     }
     if (current_instruction->matched == TRUE) {
@@ -122,17 +124,21 @@ int main() {
     }
     current_instruction->matched = TRUE;
   }
-  printf("run1:\t%hd\n", accumulator);
 
   last_instruction = instructions + instructions_number - 1;
   for (modified_instruction = instructions; modified_instruction <= last_instruction; ++modified_instruction) {
     if (modified_instruction->keyword == ACCUMULATOR)
       continue;
     modified_instruction->keyword ^= (JUMP | NOP);
-    for (current_instruction = instructions; current_instruction <= last_instruction; ++current_instruction)
-      current_instruction->matched = FALSE;
+    if (checked_bit == 128) {
+      checked_bit = TRUE;
+      for (current_instruction = instructions; current_instruction <= last_instruction; ++current_instruction)
+        current_instruction->matched = FALSE;
+    } else {
+      checked_bit <<= 1;
+    }
     position = 0;
-    accumulator = 0;
+    run2_accumulator = 0;
     while (1) {
       current_instruction = instructions + position;
       //printf("%hd: %hd\n", position, current_instruction->value);
@@ -141,10 +147,10 @@ int main() {
       } else {
         ++position;
         if (current_instruction->keyword == ACCUMULATOR) {
-          accumulator += current_instruction->value;
+          run2_accumulator += current_instruction->value;
         }
       }
-      if (current_instruction->matched == TRUE)
+      if ((current_instruction->matched & checked_bit) != 0)
         break;
       if (position == instructions_number) {
         success = TRUE;
@@ -152,12 +158,12 @@ int main() {
       }
       if (position < 0 || position > instructions_number)
         break;
-      current_instruction->matched = TRUE;
+      current_instruction->matched = checked_bit;
     }
     if (success == TRUE)
       break;
     modified_instruction->keyword ^= (JUMP | NOP);
   }
   free(instructions);
-  printf("run2:\t%hd\n", accumulator);
+  printf("%hd\t%hd\n", run1_accumulator, run2_accumulator);
 }
