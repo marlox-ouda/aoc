@@ -1,6 +1,11 @@
 /*
  * Solve of 2020.08 Advent of code
+ *
  * Author: Marlox (git@mx.ouda.fr)
+ *
+ * Performance:
+ *   0.16 ms with write_in_file
+ *   0.19 ms with print
  */
 
 //******************************************************************************
@@ -20,7 +25,7 @@
 #define SYS_EXIT 60
 #define SYS_FSYNC 74
 
-// Syscall definition (x86_64 only)
+// Entrypoint definition (x86_64 only)
 #define ENTRYPOINT _start
 
 // File mode macros
@@ -50,6 +55,12 @@
 #define CHAR_NEWLINE 10
 #define CHAR_ZERO 48
 #define CHAR_A 97
+
+// Return codes
+#define SUCCESS_CODE 0
+#define EINPUTERR -1
+#define EOUTPUTERR -2
+#define EMEMERR -3
 
 //******************************************************************************
 // Macro related to program
@@ -116,13 +127,13 @@ static const bool_t TRUE = 1;
 //******************************************************************************
 
 //******************************************************************************
-// Types related to system call and I/O management
+// Functions related to system calls
 
 // Exit the program with given return code
 //
 // Args:
 //   retcode: the return code of the program
-static inline void sys_exit(int retcode) {
+static inline void sys_exit(const int retcode) {
   register long eax asm("eax");
   asm volatile (
       "syscall"
@@ -131,6 +142,66 @@ static inline void sys_exit(int retcode) {
       : "rcx", "r11"
   );
 }
+
+// Write data buffer into the given file descriptor
+//
+// Args:
+//   fd: the file descriptor where data is written to
+//   data_buf: the buffer containing data to write
+//   data_len: the size of the buffer to write
+static inline void sys_write(const int fd, const char* const data_buf, const size_t data_len) {
+  register long eax asm("eax");
+  asm volatile (
+      "syscall"
+      : "=r" (eax)
+      : "0" (SYS_WRITE), "D" (fd), "S" (data_buf), "d" (data_len)
+      : "rcx", "r11" , "memory"
+  );
+}
+
+// Close the given file descriptor
+//
+// Args:
+//   fd: the file descriptor where data is written to
+static inline void sys_close(const int fd) {
+  register long eax asm("eax");
+  asm volatile (
+      "syscall"
+      : "=r" (eax)
+      : "0" (SYS_CLOSE), "D" (fd)
+      : "rcx", "r11"
+  );
+}
+
+// Stat the given file descriptor
+//
+// Args:
+//   fd: the file descriptor to stat
+//   st: the reference stat structure to fill with stat data
+static inline void sys_fstat(const int fd, const struct stat* st) {
+  register long eax asm("eax");
+  asm volatile (
+      "syscall"
+      : "=r" (eax)
+      : "0" (SYS_STAT), "D" (fd), "S" (st)
+      : "rcx", "r11"
+  );
+  if (eax < 0) sys_exit(EINPUTERR);
+}
+
+static inline void sys_munmap(const char* const addr, const size_t size) {
+  register long eax asm("eax");
+  asm volatile (
+      "syscall"
+      : "=r" (eax)
+      : "0" (SYS_MUNMAP), "D" (addr), "S" (size)
+      : "rcx", "r11"
+  );
+}
+
+//******************************************************************************
+// Functions related to I/O management
+
 
 // Map the whole file in memory
 //
@@ -144,7 +215,6 @@ static inline struct mapped_ptr map_file(const char * const path) {
   int fd;
   struct stat st;
 
-  register long eax asm("eax");
   register long r10 asm("r10");
   register long r8 asm("r8");
   register long r9 asm("r9");
@@ -157,17 +227,8 @@ static inline struct mapped_ptr map_file(const char * const path) {
       : "rcx", "r11"
   );
   if (fd < 0)
-    sys_exit(-1);
-  //if (fstat(fd, &st) < 0)
-  //  return -2;
-  asm volatile (
-      "syscall"
-      : "=r" (eax)
-      : "0" (SYS_STAT), "D" (fd), "S" (&st)
-      : "rcx", "r11"
-  );
-  if (eax < 0)
-    sys_exit(-2);
+    sys_exit(EINPUTERR);
+  sys_fstat(fd, &st);
   input.size = st.st_size;
   // l’ensemble du fichier est mappé en mémoire en un bloc
   //if ((addr = mmap(NULL, input.size, PROT_READ, MAP_PRIVATE, fd, 0)) < 0)
@@ -182,14 +243,9 @@ static inline struct mapped_ptr map_file(const char * const path) {
       : "rcx", "r11", "memory"
   );
   if (input.first_addr == MAP_FAILED)
-    sys_exit(-3);
+    sys_exit(EMEMERR);
   //close(fd);
-  asm volatile (
-      "syscall"
-      : "=r" (eax)
-      : "0" (SYS_CLOSE), "D" (fd)
-      : "rcx", "r11"
-  );
+  sys_close(fd);
   return input;
 }
 
@@ -198,14 +254,7 @@ static inline struct mapped_ptr map_file(const char * const path) {
 // Args:
 //   mapping: the mapping to unmap
 static inline void unmap(struct mapped_ptr mapping) {
-  //munmap(mapping.first_addr, mapping.size);
-  register long eax asm("eax");
-  asm volatile (
-      "syscall"
-      : "=r" (eax)
-      : "0" (SYS_MUNMAP), "D" (mapping.first_addr), "S" (mapping.size)
-      : "rcx", "r11"
-  );
+  sys_munmap(mapping.first_addr, mapping.size);
 }
 
 // Print the given data to provided file
@@ -214,11 +263,10 @@ static inline void unmap(struct mapped_ptr mapping) {
 //
 // Args:
 //   path: the path in witch data has to be written
-//   data_to_write: the buffer containing data to write
+//   data_buf: the buffer containing data to write
 //   data_len: the size of the buffer to write
-static inline void write_in_file(const char* const path, const char* const data_to_write, const size_t data_len) {
+static inline void write_in_file(const char* const path, const char* const data_buf, const size_t data_len) {
   int fd;
-  register long eax asm("eax");
   asm volatile (
       "syscall"
       : "=a" (fd)
@@ -226,38 +274,22 @@ static inline void write_in_file(const char* const path, const char* const data_
       : "rcx", "r11", "memory"
   );
   if (fd < 0)
-    sys_exit(-4);
-  asm volatile (
-      "syscall"
-      : "=r" (eax)
-      : "0" (SYS_WRITE), "D" (fd), "S" (data_to_write), "d" (data_len)
-      : "rcx", "r11" , "memory"
-  );
-  asm volatile (
-      "syscall"
-      : "=r" (eax)
-      : "0" (SYS_CLOSE), "D" (fd)
-      : "rcx", "r11"
-  );
+    sys_exit(EOUTPUTERR);
+  sys_write(fd, data_buf, data_len);
+  sys_close(fd);
 }
 
 // Print the given data to stdout
 //
 // Args:
-//   data_to_write: the buffer containing data to write
+//   data_buf: the buffer containing data to write
 //   data_len: the size of the buffer to write
-static inline void print(const char* const data_to_write, const size_t data_len) {
-  register long eax asm("eax");
-  asm volatile (
-      "syscall"
-      : "=r" (eax)
-      : "0" (SYS_WRITE), "D" (FD_STDOUT), "S" (data_to_write), "d" (data_len)
-      : "rcx", "r11" , "memory"
-  );
+static inline void print(const char* const data_buf, const size_t data_len) {
+  sys_write(FD_STDOUT, data_buf, data_len);
 }
 
 //******************************************************************************
-// Recurrent macros among programs
+// Recurrent functions among programs
 
 // Prepend short value in the buffer (in decimal base)
 //
@@ -288,7 +320,6 @@ void ENTRYPOINT() {
   // hardcoded path
   const char* const input_path = "/home/user/aoc/2020/08/input8.txt";
   //const char* const output_path = "/tmp/output8.txt";
-  struct mapped_ptr input;
 
   const char * addr;
   const char * last_addr;
@@ -309,7 +340,7 @@ void ENTRYPOINT() {
   char * output_char;
   char output_buffer[OUTPUT_BUFFER_LEN];
 
-  input = map_file(input_path);
+  const struct mapped_ptr input = map_file(input_path);
 
   last_addr = input.first_addr + input.size;
   current_instruction = instructions;
@@ -419,8 +450,8 @@ void ENTRYPOINT() {
   output_char = prepend_short_in_buf(output_char, run2_accumulator);
   *(--output_char) = '\t';
   output_char = prepend_short_in_buf(output_char, run1_accumulator);
+
   print(output_char, (output_buffer + OUTPUT_BUFFER_LEN - output_char - 1));
   //write_in_file(output_path, output_char, (output_buffer + OUTPUT_LEN - output_char - 1));
-  //return 0;
-  sys_exit(0);
+  sys_exit(SUCCESS_CODE);
 }
