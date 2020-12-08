@@ -70,11 +70,71 @@ static inline void sys_exit(int retcode) {
   );
 }
 
-void _start() {
-  int fd;
-  struct stat st;
-
+struct loaded_input_t {
   const char * first_addr;
+  struct stat st; 
+};
+
+static inline struct loaded_input_t map_input() {
+  int fd;
+  const char* const path = "/home/user/aoc/2020/08/input8.txt";
+
+  // register
+  register long eax asm("eax");
+  register long r10 asm("r10");
+  register long r8 asm("r8");
+  register long r9 asm("r9");
+
+  // input
+  struct loaded_input_t input;
+
+  //if ((fd = open(path, O_RDONLY | O_NOATIME)) < 0)
+  asm volatile (
+      "syscall"
+      : "=a" (fd)
+      : "0" (SYS_OPEN), "D" (path), "S" (O_RDONLY | O_NOATIME)
+      : "rcx", "r11"
+  );
+  if (fd < 0)
+    sys_exit(-1);
+  //if (fstat(fd, &st) < 0)
+  //  return -2;
+  asm volatile (
+      "syscall"
+      : "=r" (eax)
+      : "0" (SYS_STAT), "D" (fd), "S" (&input.st)
+      : "rcx", "r11"
+  );
+  if (eax < 0)
+    sys_exit(-2);
+  // l’ensemble du fichier est mappé en mémoire en un bloc
+  //if ((addr = mmap(NULL, input.st.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) < 0)
+    //return -3;
+  r10 = MAP_PRIVATE;
+  r8 = fd;
+  r9 = 0;
+  asm volatile (
+      "syscall"
+      : "=a" (input.first_addr)
+      : "0" (SYS_MMAP), "D" (0), "S" (input.st.st_size), "d" (PROT_READ), "r" (r10), "r" (r8), "r" (r9)
+      : "rcx", "r11", "memory"
+  );
+  if (input.first_addr == MAP_FAILED)
+    sys_exit(-3);
+  //close(fd);
+  asm volatile (
+      "syscall"
+      : "=r" (eax)
+      : "0" (SYS_CLOSE), "D" (fd)
+      : "rcx", "r11"
+  );
+  return input;
+}
+
+void _start() {
+  struct loaded_input_t input;
+  int fd;
+
   const char * addr;
   const char * last_addr;
 
@@ -95,67 +155,19 @@ void _start() {
   char output_buffer[OUTPUT_LEN];
   // register
   register long eax asm("eax");
-  register long r10 asm("r10");
-  register long r8 asm("r8");
-  register long r9 asm("r9");
   // hardcoded path
-  const char* const path = "/home/user/aoc/2020/08/input8.txt";
   const char* const output_path = "/tmp/output8.txt";
 
-  //if ((fd = open("/home/user/aoc/2020/08/input8.txt", O_RDONLY | O_NOATIME)) < 0)
-  asm volatile (
-      "syscall"
-      : "=a" (fd)
-      : "0" (SYS_OPEN), "D" (path), "S" (O_RDONLY | O_NOATIME)
-      : "rcx", "r11"
-  );
-  if (fd < 0)
-    sys_exit(-1);
-  //if (fstat(fd, &st) < 0)
-  //  return -2;
-  asm volatile (
-      "syscall"
-      : "=r" (eax)
-      : "0" (SYS_STAT), "D" (fd), "S" (&st)
-      : "rcx", "r11"
-  );
-  if (eax < 0)
-    sys_exit(-2);
-  // l’ensemble du fichier est mappé en mémoire en un bloc
-  //if ((addr = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) < 0)
-    //return -3;
-  r10 = MAP_PRIVATE;
-  r8 = fd;
-  r9 = 0;
-  asm volatile (
-      "syscall"
-      : "=a" (first_addr)
-      : "0" (SYS_MMAP), "D" (0), "S" (st.st_size), "d" (PROT_READ), "r" (r10), "r" (r8), "r" (r9)
-      : "rcx", "r11", "memory"
-  );
-  if (first_addr == MAP_FAILED)
-    sys_exit(-3);
-  //close(fd);
-  asm volatile (
-      "syscall"
-      : "=r" (eax)
-      : "0" (SYS_CLOSE), "D" (fd)
-      : "rcx", "r11"
-  );
-  last_addr = first_addr + st.st_size;
-  addr = first_addr;
-  while (addr < last_addr) {
-    if (*addr == CHAR_NEWLINE)
-      ++instructions_number;
-    addr += 1;
-  }
-  //instructions = malloc((instructions_number) * sizeof(struct instruction_t));
+  input = map_input();
+
+  last_addr = input.first_addr + input.st.st_size;
   current_instruction = instructions;
-  addr = first_addr;
+  addr = input.first_addr;
   while (addr < last_addr) {
     switch (*addr) {
       case CHAR_NEWLINE:
         ++current_instruction;
+        ++instructions_number;
         ++addr;
         break;
       case CHAR_A:
@@ -195,7 +207,7 @@ void _start() {
   asm volatile (
       "syscall"
       : "=r" (eax)
-      : "0" (SYS_MUNMAP), "D" (first_addr), "S" (st.st_size)
+      : "0" (SYS_MUNMAP), "D" (input.first_addr), "S" (input.st.st_size)
       : "rcx", "r11"
   );
   while (1) {
