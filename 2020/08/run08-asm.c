@@ -78,9 +78,10 @@
 
 // Return codes
 #define SUCCESS_CODE 0
-#define EINPUTERR -1
-#define EOUTPUTERR -2
+#define EIOINPUTERR -1
+#define EIOOUTPUTERR -2
 #define EMEMERR -3
+#define EFMTINPUTERR -4
 
 //******************************************************************************
 // Macro related to program
@@ -206,7 +207,8 @@ static inline void sys_fstat(const int fd, const struct stat* st) {
       : "0" (SYS_STAT), "D" (fd), "S" (st)
       : "rcx", "r11"
   );
-  if (eax < 0) sys_exit(EINPUTERR);
+  if (eax < 0)
+    sys_exit(EIOINPUTERR);
 }
 
 static inline void sys_munmap(const char* const addr, const size_t size) {
@@ -247,7 +249,7 @@ static inline struct mapped_ptr map_file(const char * const path) {
       : "rcx", "r11"
   );
   if (fd < 0)
-    sys_exit(EINPUTERR);
+    sys_exit(EIOINPUTERR);
   sys_fstat(fd, &st);
   input.size = st.st_size;
   // l’ensemble du fichier est mappé en mémoire en un bloc
@@ -294,7 +296,7 @@ static inline void write_in_file(const char* const path, const char* const data_
       : "rcx", "r11", "memory"
   );
   if (fd < 0)
-    sys_exit(EOUTPUTERR);
+    sys_exit(EIOOUTPUTERR);
   sys_write(fd, data_buf, data_len);
   sys_close(fd);
 }
@@ -356,6 +358,7 @@ void ENTRYPOINT() {
   short run1_accumulator = 0;
   short run2_accumulator = 0;
   bool_t success = FALSE;
+  bool_t minus_char;
 
   char * output_char;
   char output_buffer[OUTPUT_BUFFER_LEN];
@@ -367,43 +370,36 @@ void ENTRYPOINT() {
   addr = input.first_addr;
   while (addr < last_addr) {
     switch (*addr) {
-      case CHAR_NEWLINE:
-        ++current_instruction;
-        ++instructions_number;
-        ++addr;
-        break;
       case CHAR_A:
         current_instruction->keyword = ACCUMULATOR;
-        current_instruction->matched = FALSE;
-        addr += 4;
         break;
       case CHAR_N:
         current_instruction->keyword = NOP;
-        current_instruction->matched = FALSE;
-        addr += 4;
         break;
       case CHAR_J:
         current_instruction->keyword = JUMP;
-        current_instruction->matched = FALSE;
-        addr += 4;
         break;
-      case CHAR_MOINS:
-        value = 0;
-        while (*++addr != CHAR_NEWLINE) {
-          value *= 10;
-          value += (*addr - CHAR_ZERO);
-        }
-        current_instruction->value = -value;
-        break;
-      case CHAR_PLUS:
-        value = 0;
-        while (*++addr != CHAR_NEWLINE) {
-          value *= 10;
-          value += (*addr - CHAR_ZERO);
-        }
-        current_instruction->value = value;
-        break;
+      default:
+        sys_exit(EFMTINPUTERR);
     }
+    current_instruction->matched = FALSE;
+    addr += 4;
+    if (*addr == CHAR_MOINS)
+      minus_char = TRUE;
+    else
+      minus_char = FALSE;
+    value = 0;
+    while (*++addr != CHAR_NEWLINE) {
+      value *= 10;
+      value += (*addr - CHAR_ZERO);
+    }
+    if (minus_char == TRUE)
+      current_instruction->value = -value;
+    else
+      current_instruction->value = value;
+    ++current_instruction;
+    ++instructions_number;
+    ++addr;
   }
   unmap(input);
   while (1) {
