@@ -126,7 +126,7 @@ struct mapped_ptr {
 };
 
 //******************************************************************************
-// Types related to program
+// Types specific to program
 
 typedef char keyword_t;
 typedef unsigned char bool_t;
@@ -135,6 +135,11 @@ struct instruction_t {
   keyword_t keyword;
   short value;
   bool_t matched;
+};
+
+struct run_t {
+  short accumulator;
+  bool_t success;
 };
 
 static const keyword_t ACCUMULATOR = 1;
@@ -223,7 +228,6 @@ static inline void sys_munmap(const char* const addr, const size_t size) {
 
 //******************************************************************************
 // Functions related to I/O management
-
 
 // Map the whole file in memory
 //
@@ -335,39 +339,19 @@ static inline char * prepend_short_in_buf(char *buf, short value) {
 }
 
 //******************************************************************************
-// Main function
-//******************************************************************************
+// Function specific to program
 
-void ENTRYPOINT() {
-  // hardcoded path
-  const char* const input_path = "/home/user/aoc/2020/08/input8.txt";
-  const char* const output_path = "/tmp/output8.txt";
-
+static inline unsigned short load_instructions(const struct instruction_t* instructions, const struct mapped_ptr* const input) {
   const char * addr;
   const char * last_addr;
-
-  unsigned short instructions_number = 0;
-  //struct instruction_t * instructions;
-  struct instruction_t instructions[INSTRUCTIONS_BUFFER_LEN];
   struct instruction_t * current_instruction;
-  struct instruction_t * modified_instruction;
-  struct instruction_t * last_instruction;
-  bool_t checked_bit = TRUE;
+  unsigned short instructions_number = 0;
   short value;
-  short position = 0;
-  short run1_accumulator = 0;
-  short run2_accumulator = 0;
-  bool_t success = FALSE;
   bool_t minus_char;
 
-  char * output_char;
-  char output_buffer[OUTPUT_BUFFER_LEN];
-
-  const struct mapped_ptr input = map_file(input_path);
-
-  last_addr = input.first_addr + input.size;
-  current_instruction = instructions;
-  addr = input.first_addr;
+  last_addr = input->first_addr + input->size;
+  current_instruction = (struct instruction_t*)instructions;
+  addr = input->first_addr;
   while (addr < last_addr) {
     switch (*addr) {
       case CHAR_A:
@@ -401,63 +385,96 @@ void ENTRYPOINT() {
     ++instructions_number;
     ++addr;
   }
-  unmap(input);
+  return instructions_number;
+}
+
+static inline void run_infinite_loop(
+    struct run_t* const run_result,
+    struct instruction_t* first_instruction,
+    const unsigned short instructions_number,
+    const bool_t checked_bit
+    ) {
+  struct instruction_t * current_instruction;
+  short position = 0;
+  run_result->accumulator = 0;
   while (1) {
-    current_instruction = instructions + position;
-    //printf("%hd: %hd\n", position, current_instruction->value);
+    current_instruction = first_instruction + position;
     if (current_instruction->keyword == JUMP) {
       position += current_instruction->value;
     } else {
       ++position;
       if (current_instruction->keyword == ACCUMULATOR) {
-        run1_accumulator += current_instruction->value;
+        run_result->accumulator += current_instruction->value;
       }
     }
-    if (current_instruction->matched == TRUE) {
+    if ((current_instruction->matched & checked_bit) != 0)
+      break;
+    if (position == instructions_number) {
+      run_result->success = TRUE;
       break;
     }
-    current_instruction->matched = TRUE;
+    if (position < 0 || position > instructions_number)
+      break;
+    current_instruction->matched = checked_bit;
   }
+}
 
-  last_instruction = instructions + instructions_number - 1;
-  for (modified_instruction = instructions; modified_instruction <= last_instruction; ++modified_instruction) {
-    if (modified_instruction->keyword == ACCUMULATOR)
-      continue;
-    modified_instruction->keyword ^= (JUMP | NOP);
-    if (checked_bit == 128) {
-      checked_bit = TRUE;
-      for (current_instruction = instructions; current_instruction <= last_instruction; ++current_instruction)
-        current_instruction->matched = FALSE;
-    } else {
-      checked_bit <<= 1;
-    }
-    position = 0;
-    run2_accumulator = 0;
-    while (1) {
-      current_instruction = instructions + position;
-      //printf("%hd: %hd\n", position, current_instruction->value);
-      if (current_instruction->keyword == JUMP) {
-        position += current_instruction->value;
-      } else {
-        ++position;
-        if (current_instruction->keyword == ACCUMULATOR) {
-          run2_accumulator += current_instruction->value;
-        }
-      }
-      if ((current_instruction->matched & checked_bit) != 0)
-        break;
-      if (position == instructions_number) {
-        success = TRUE;
-        break;
-      }
-      if (position < 0 || position > instructions_number)
-        break;
-      current_instruction->matched = checked_bit;
-    }
-    if (success == TRUE)
-      break;
-    modified_instruction->keyword ^= (JUMP | NOP);
+static inline void update_checked_bit(
+    struct instruction_t* const first_instruction,
+    struct instruction_t* const last_instruction,
+    bool_t* checked_bit
+    ) {
+  struct instruction_t * current_instruction;
+  if (*checked_bit == 128) {
+    *checked_bit = TRUE;
+    for (current_instruction = (struct instruction_t*) first_instruction; current_instruction <= last_instruction; ++current_instruction)
+      current_instruction->matched = FALSE;
+  } else {
+    *checked_bit <<= 1;
   }
+}
+
+
+//******************************************************************************
+// Main function
+//******************************************************************************
+
+void ENTRYPOINT() {
+  // hardcoded path
+  const char* const input_path = "/home/user/aoc/2020/08/input8.txt";
+  const char* const output_path = "/tmp/output8.txt";
+
+  //struct instruction_t * instructions;
+  struct run_t run_result;
+  struct instruction_t instructions[INSTRUCTIONS_BUFFER_LEN];
+  struct instruction_t * current_instruction;
+  bool_t checked_bit = TRUE;
+  short run1_accumulator;
+  short run2_accumulator;
+
+  char * output_char;
+  char output_buffer[OUTPUT_BUFFER_LEN];
+
+  const struct mapped_ptr input = map_file(input_path);
+  const unsigned short instructions_number = load_instructions(instructions, &input);
+  struct instruction_t * const last_instruction = instructions + instructions_number;
+  unmap(input);
+
+  run_infinite_loop(&run_result, instructions, instructions_number, checked_bit);
+  run1_accumulator = run_result.accumulator;
+
+  run_result.success = FALSE;
+  for (current_instruction = instructions; current_instruction < last_instruction; ++current_instruction) {
+    if (current_instruction->keyword == ACCUMULATOR)
+      continue;
+    current_instruction->keyword ^= (JUMP | NOP);
+    update_checked_bit(instructions, last_instruction, &checked_bit);
+    run_infinite_loop(&run_result, instructions, instructions_number, checked_bit);
+    if (run_result.success == TRUE)
+      break;
+    current_instruction->keyword ^= (JUMP | NOP);
+  }
+  run2_accumulator = run_result.accumulator;
   //free(instructions);
   //printf("%hd\t%hd\n", run1_accumulator, run2_accumulator);
   output_char = output_buffer + OUTPUT_BUFFER_LEN;
